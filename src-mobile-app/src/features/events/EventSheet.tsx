@@ -1,213 +1,252 @@
 import { Check, ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { Sheet } from '@tamagui/sheet';
 import { useEffect, useMemo, useState } from 'react';
-import { Adapt, Button, H3, Select, Theme, YStack } from 'tamagui';
-import { fetchEvents, selectActiveEvent, setActiveEvent } from '../../store/eventsSlice';
-import { useTypedDispatch, useTypedSelector } from '../../store/store';
-import { fetchTeams, selectTeams } from '../../store/teamsSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { Adapt, Button, H1, H2, H3, Select, YStack, XStack, Text, useTheme, TextArea} from 'tamagui';
+import { SBTeam, Tables } from '../../lib/supabase-types';
+import { EventsState, setActiveEvent } from '../../store/eventsSlice';
+import { RootState, useTypedDispatch } from '../../store/store';
+import { TeamsState, fetchTeams } from '../../store/teamsSlice';
 import { LinearGradient } from 'tamagui/linear-gradient';
 import React from 'react';
-import { useAuth } from '../system/Auth';
-import { fetchTeamStats, fetchTeamStatsBreakdown } from '../../store/teamStatsSlice';
-import { SBEvent } from '../../lib/models';
-import { supabase } from '../../lib/supabase';
+import { TextInput, Keyboard, TouchableWithoutFeedback, Text as RN_Text} from 'react-native';
+import { ArrowLeft } from '@tamagui/lucide-icons'
 
-export default function EventDetailsSheet() {
-  const activeEvent = useTypedSelector(selectActiveEvent);
-  const eventTeams = useTypedSelector(selectTeams)
+import { supabase } from '../../lib/supabase';
+import { fetchEvents } from '../../store/eventsSlice';
+import { ScrollView as RN_ScrollView } from "react-native";
+
+import TeamCard from '../teams/TeamCard';
+import { setGestureState } from 'react-native-reanimated';
+import { v4 as uuidv4 } from 'uuid';
+import { createTeam } from '../../store/teamsSlice';
+
+
+
+type Props = {
+	team: Tables<'Teams'>
+}
+
+export default function EventDetailsSheet( {team} : Props) {
+  //
+  const [showJoinOptions, setShowJoinOptions] = useState(true);     // State to manage which join options to display
+  const [showCreateOptionsView, setShowCreateOptionsView] = useState(false); // State to manage which create options to display
+  const [teamName, setTeamName] = useState('');
+
+
+  const [dragEnabled, setDragEnabled] = useState(true);
+
+  const activeEvent = useSelector<RootState, EventsState>(state => state.eventsSlice).activeEvent;
+  const eventTeams = useSelector<RootState, TeamsState>(state => state.teamsSlice).teams
     .filter(team => team.BelongsToEventID === activeEvent?.EventID);
 
   const dispatch = useTypedDispatch();
-  const { user, session } = useAuth();
 
-  const [event, setEvent] = useState<SBEvent | null>();
-  const [teamID, setTeamID] = useState<string>('New');
+  const[registrationStep, setRegistrationStep] = useState('options'); //state to manage the current registration step
 
   useEffect(() => {
-    setEvent(activeEvent);
-      
-    dispatch(fetchTeams())
+    if (activeEvent)
+      setEvent(activeEvent);
+
+    dispatch(fetchTeams());
   }, [activeEvent]);
 
-  async function joinTeam(eventID: string, joinTeamID: string | null) {
-    console.log(eventID);
-    if (joinTeamID === 'New' || joinTeamID === null) {
-      
-      const createTeamResult = await supabase
-        .from('Teams')
-        .upsert({
-          Name: session!.user.email!,
-          BelongsToEventID: eventID 
-        })
-        .select()
-        .single();
+  useEffect(() => {
+    console.log(eventTeams);
+  }, [eventTeams]);
 
-      if (createTeamResult.error) {
-        console.log(createTeamResult.error);
-        return;
-      }
+  const [event, setEvent] = useState<Tables<'Events'>>();
+  const [teamID, setTeamID] = useState<string>('New');
+  const [selectedTeam, setSelectedTeam] = useState<Tables<'Teams'> | null>(null); // State to store selected team
 
-      const joinTeamResult = await supabase
-        .from('TeamsProfiles')
-        .upsert({
-          ProfileID: session!.user.id,
-          TeamID: createTeamResult.data.TeamID
-        })
-        .select()
-        .single();
-
-      if (joinTeamResult.error) {
-        console.log(joinTeamResult.error);
-        return;
-      }
-    } else {
-      const joinTeamResult = await supabase
-        .from('TeamsProfiles')
-        .upsert({
-          ProfileID: session!.user.id,
-          TeamID: joinTeamID
-        })
-        .select()
-        .single();
-
-      if (joinTeamResult.error) {
-        console.log(joinTeamResult.error);
-        return;
-      }
-    }
-
-    dispatch(setActiveEvent(null));
-    await dispatch(fetchEvents());
-    await dispatch(fetchTeams());
-    await dispatch(fetchTeamStats());
-    await dispatch(fetchTeamStatsBreakdown());
+  const registrationOptions = async () => {
+    setShowJoinOptions(false);
+    setDragEnabled(false);
+    
+    eventTeams.forEach((team) => {
+      console.log(`- ${team.Name}`); // Print each team's name on a new line with a bullet
+    });
   }
 
+  const createTeamOption = async () => {
+    setShowJoinOptions(false);
+    setShowCreateOptionsView(true);
+    setDragEnabled(false);
+  }
 
-  const joinTeamCallback = React.useCallback(() => {
-    if (activeEvent === null) return;
-    joinTeam(activeEvent.EventID, teamID);
-  }, [session, teamID]);
+  const activeEventID = useSelector<RootState, string | undefined>(state => state.eventsSlice.activeEvent?.EventID);
+
+  const handleRegister = async () => {
+    if (!activeEvent?.EventID) {
+      console.error('Active event ID is undefined');
+      // case where the active event ID is undefined
+      return;
+    }
+  
+    // Dispatch the createTeam action with the team name and event ID
+    dispatch(createTeam({ name: teamName, eventID: activeEvent.EventID }))
+      .then((resultAction) => {
+        if (createTeam.fulfilled.match(resultAction)) {
+
+          // Team creation succeeded
+          console.log('New team created:', resultAction.payload);
+          alert('New team created successfully!');
+          
+          dispatch(fetchTeams()); 
+        } else if (createTeam.rejected.match(resultAction)) {
+
+          // Team creation failed
+          console.error('Error creating team:', resultAction.payload);
+          alert('Error creating team: ' + resultAction.payload);
+        }
+      });
+    
+    setTeamName('');
+    setShowCreateOptionsView(false);
+    setShowJoinOptions(true);
+    setDragEnabled(true);
+  }
+
+  const scrollHandling = () => {
+    if(!dragEnabled){
+      return true;
+    }
+    return false;
+  }
+
+  const handleBack = () => {
+    setShowJoinOptions(true); // Close the modal by setting activeEvent to null
+    setDragEnabled(true);
+    setShowCreateOptionsView(false);
+  };
+  
 
   return (
     <Sheet
-      native
+      native 
       modal
       animation="medium"
       open={activeEvent !== null}
       dismissOnSnapToBottom
-      onOpenChange={(open: boolean) => { if (!open) dispatch(setActiveEvent(null)) }}
+      disableDrag={!dragEnabled}
+      onOpenChange={(open: boolean) => { if (!open) dispatch(setActiveEvent(null)); setDragEnabled(true); }}
     >
       <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
-      <Sheet.Frame alignItems="center" justifyContent="flex-start">
+      <Sheet.Frame>
         <Sheet.Handle />
-
-        <YStack gap="$4" width={'100%'} padding="$6">
-          <H3>Select a team</H3>
-          <Select value={teamID} onValueChange={setTeamID} disablePreventBodyScroll>
-            {/* Theme reset stops a warning from popping up, NO idea why */}
-            <Theme reset>
-              <Select.Trigger width={220} iconAfter={ChevronDown}>
-                <Select.Value placeholder="Select a team..." />
-              </Select.Trigger>
-            </Theme>
-            <Adapt when="sm" platform="touch">
-              <Sheet
-                native={true}
-                modal
-                dismissOnSnapToBottom
-                animationConfig={{
-                  type: 'spring',
-                  damping: 20,
-                  mass: 1.2,
-                  stiffness: 250,
-                }}
-                snapPoints={[50]}
-              >
-                <Sheet.Frame>
-                  <Sheet.ScrollView>
-                    <Adapt.Contents />
-                  </Sheet.ScrollView>
-                </Sheet.Frame>
-                <Sheet.Overlay
-                  animation="lazy"
-                  enterStyle={{ opacity: 0 }}
-                  exitStyle={{ opacity: 0 }}
-                />
-              </Sheet>
-            </Adapt>
-            <Select.Content zIndex={200000}>
-          
-              <Select.ScrollUpButton
-                alignItems="center"
-                justifyContent="center"
-                position="relative"
-                width="100%"
-                height="$3"
-              >
-                <YStack zIndex={10}>
-                  <ChevronUp size={20} />
+        <YStack>
+          <YStack paddingBottom="$12" paddingTop="0%" alignItems="center">
+            {showJoinOptions ? (
+              <>
+                <H2 paddingBottom="$3">Registration</H2>
+                <Text color="white" paddingBottom="$12">- Select an option to register for a team -</Text>
+                <XStack justifyContent="center" paddingBottom="$20">
+                  <Button
+                    bg={'#eb7434'} 
+                    color={'white'} 
+                    height="$13"
+                    width="$12"
+                    marginRight="$3"
+                    fontSize="$8"
+                    onPress={registrationOptions}
+                  >
+                    Join
+                  </Button>
+                  <Button
+                    bg={'#eb7434'} 
+                    color={'white'} 
+                    height="$13"
+                    width="$12"
+                    marginLeft="$3"
+                    fontSize="$8"
+                    onPress={createTeamOption}
+                  >
+                    Create
+                  </Button>
+                </XStack>
+              </>
+            ) : showCreateOptionsView ? (
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <YStack width="100%">
+                  <XStack width="100%" alignItems='center' paddingBottom="$3">
+                    <XStack alignItems='center' paddingRight="10%">
+                      <Button 
+                        icon={<ArrowLeft size="$2"/>} 
+                        padding="$2" 
+                        marginLeft="$2"
+                        marginRight="$2"
+                        backgroundColor={"$backgroundTransparent"}
+                        onPress={handleBack}
+                      >
+                      </Button>
+                    </XStack>
+                    <XStack paddingLeft="$7">
+                      <Text fontSize="$7">Create Team</Text>
+                    </XStack>
+                  </XStack>
+                  <YStack justifyContent='space-between' padding="$2">
+                    <YStack 
+                      height="90%"
+                      padding="$10"
+                      alignItems='center'
+                    >
+                      <TextArea
+                        value={teamName}
+                        onChangeText={(text) => setTeamName(text)}
+                        placeholder="Enter team name..."
+                        width="90%"
+                        padding="$4"
+                        fontSize="$6"
+                      >
+                      </TextArea>
+                      
+                      <XStack padding="$15">
+                        <Button
+                          bg={'#eb7434'}
+                          color={'white'}
+                          fontSize="$6"
+                          height="$5"
+                          width="$14"
+                          borderRadius="$10"
+                          pressStyle={{ opacity: 1 }} // Optional: Adjust opacity on press
+                          onPress={handleRegister}
+                        >
+                          Register
+                        </Button>
+                      </XStack>
+                    </YStack>
+                  </YStack>
                 </YStack>
-                <LinearGradient
-                  start={[0, 0]}
-                  end={[0, 1]}
-                  fullscreen
-                  colors={['$background', 'transparent']}
-                  borderRadius="$4"
-                />
-              </Select.ScrollUpButton>
-              <Select.Viewport minWidth={200}>
-                <Select.Group>
-                  <Select.Label>Teams</Select.Label>
-                  <Select.Item index={-1} key={-1} value={'New'}>
-                    <Select.ItemText>Start new team</Select.ItemText>
-                    <Select.ItemIndicator marginLeft="auto">
-                      <Check size={16} />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-                  {useMemo(() => eventTeams.map((team, i) => (
-                    <Select.Item index={i} key={team.TeamID} value={team.TeamID}>
-                      <Select.ItemText>{team.Name}</Select.ItemText>
-                      <Select.ItemIndicator marginLeft="auto">
-                        <Check size={16} />
-                      </Select.ItemIndicator>
-                    </Select.Item>
-                  )), [eventTeams])}
-          
-                </Select.Group>
-              </Select.Viewport>
-              <Select.ScrollDownButton
-                alignItems="center"
-                justifyContent="center"
-                position="relative"
-                width="100%"
-                height="$3"
-              >
-                <YStack zIndex={10}>
-                  <ChevronDown size={20} />
+              </TouchableWithoutFeedback>
+              
+            ) : (
+              <YStack width="100%">
+                <XStack width="100%" alignItems='center' paddingBottom="$3">
+                  <XStack alignItems='center' paddingRight="10%">
+                    <Button 
+                      icon={<ArrowLeft size="$2"/>} 
+                      padding="$2" 
+                      marginLeft="$2"
+                      marginRight="$2"
+                      backgroundColor={"$backgroundTransparent"}
+                      onPress={handleBack}
+                    >
+                    </Button>
+                  </XStack>
+                  <XStack paddingLeft="$6">
+                    <Text fontSize="$7">Available Teams</Text>
+                  </XStack>
+                </XStack>
+                <YStack justifyContent='space-between'>
+                  <RN_ScrollView>
+                    {eventTeams.map(team => <TeamCard key={team.TeamID} team={team} /> )}
+                  </RN_ScrollView>
                 </YStack>
-                <LinearGradient
-                  start={[0, 0]}
-                  end={[0, 1]}
-                  fullscreen
-                  colors={['transparent', '$background']}
-                  borderRadius="$4"
-                />
-              </Select.ScrollDownButton>
-            </Select.Content>
-          </Select>
-
-          <Button bg={'#eb7434'} color={'white'} onPress={joinTeamCallback}>Join</Button>
+              </YStack>
+            )}
+          </YStack>
         </YStack>
-
-        {/* <Button
-          size="$6"
-          circular
-          icon={ChevronDown}
-          onPress={() => dispatch(setActiveEvent(null))}
-        /> */}
-
       </Sheet.Frame>
     </Sheet>
-  )
+  );
 }
