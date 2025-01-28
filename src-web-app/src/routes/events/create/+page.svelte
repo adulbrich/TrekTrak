@@ -7,8 +7,6 @@
   import RewardTierInput from "./RewardTierInput.svelte";
   export let data;
   export let form;
-  let { session, supabase, event } = data;
-  $: ({ session, supabase, event } = data);
 
   $: if (form) {
     if (form.errorMessage) toast.error(form.errorMessage);

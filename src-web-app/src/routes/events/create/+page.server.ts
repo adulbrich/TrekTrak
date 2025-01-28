@@ -1,4 +1,5 @@
 import { fail, redirect } from "@sveltejs/kit";
+import { randomUUID } from "crypto";
 
 export const load = async ({ locals: { supabase, getSession } }: { locals: { supabase: any; getSession: () => Promise<any> } }) => {
   const session = await getSession();
@@ -7,19 +8,7 @@ export const load = async ({ locals: { supabase, getSession } }: { locals: { sup
     throw redirect(303, "/events");
   }
 
-    const { data: event, error } = await supabase
-     .from('event')
-     .select(`event_name, event_type, event_start_date, event_end_date, event_description, event_banner`)
-     .eq('id', session.user.id)
-     .single()
-
-    if (error) {
-        console.error('Failed to fetch event:', error);
-    } else {
-        console.log('Event data successfully fetched');
-    }
-
-    return { session, event }
+  return { session }
 }
 
 export const actions = {
@@ -83,6 +72,7 @@ export const actions = {
       .from("Events")
       .upsert({
         // Column names must match case acccording to schema.
+        EventID: randomUUID(),
         Name: eventName,
         Type: eventType,
         StartsAt: startDate,
@@ -102,7 +92,7 @@ export const actions = {
 
     // Error handle.
     if (createEventError) {
-      console.log(createEventError);
+      console.log('Failed to create event: ', createEventError.message);
       return fail(500, {
         errorMessage: createEventError.message,
         eventName,
@@ -136,9 +126,13 @@ export const actions = {
     const { error: uploadRewardIconError } = await supabase.storage.from("EventAssets").upload(`RewardIcons/${createEventData.EventID}`, rewardIcon, {
       contentType: rewardIcon.type,
     });
+    if (uploadRewardIconError) {
+      console.log("Failed to upload reward icon: ", uploadRewardIconError.message);
+    }
 
     // Error handle.
     if (uploadBannerError) {
+      console.log("Failed to upload banner: ", uploadBannerError.message);
       return fail(500, {
         errorMessage: uploadBannerError.message,
         eventName,
@@ -153,8 +147,7 @@ export const actions = {
       });
     }
 
-    console.log(uploadBannerError);
-    console.log(uploadRewardIconError);
+    console.log('Successfully created an event');
     // Done.
     return {
       errorMessage: null,
