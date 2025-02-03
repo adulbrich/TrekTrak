@@ -9,6 +9,7 @@ const initialState: SystemState = {
   userID: null
 }
 
+//Testing profile info: userID is properly added here
 const systemSlice = createSlice({
   name: 'system',
   initialState,

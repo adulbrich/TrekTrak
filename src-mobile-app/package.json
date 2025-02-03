@@ -57,7 +57,8 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0",
-    "tamagui": "^1.91.4"
+    "tamagui": "^1.91.4",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",

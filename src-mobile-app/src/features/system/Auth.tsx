@@ -3,8 +3,10 @@ import { Session, User, createClient } from '@supabase/supabase-js';
 import { createContext, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import { useTypedDispatch } from '../../store/store';
-import { setUserID } from '../../store/systemSlice';
+import { setUserID, selectUserID } from '../../store/systemSlice';
 import { supabase } from '../../lib/supabase';
+import { useSelector } from 'react-redux';
+import { fetchProfile } from '../../store/profileSlice';
 
 export interface AuthSessionState {
   session: Session | null
@@ -45,8 +47,11 @@ export function AuthSessionProvider({ children }: { children: React.ReactNode })
             return;
           }
 
-          // Update our Redux store with the new user ID
+          //console.log("User ID: ", data?.session?.user?.id) User ID is received from login, need to get profile using the ID
+
+          // Update our Redux store with the new user ID and associated profile info
           dispatch(setUserID(data?.session?.user?.id));
+          
 
           // Update our local context state
           setState({
@@ -81,6 +86,7 @@ export function AuthSessionProvider({ children }: { children: React.ReactNode })
 
           // Update our Redux store with the new user ID
           dispatch(setUserID(data?.session?.user?.id));
+          
 
           // Update our local context state
           setState({

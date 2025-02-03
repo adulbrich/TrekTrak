@@ -3,7 +3,8 @@ import eventsReducer from "./eventsSlice";
 import teamStatsReducer from "./teamStatsSlice";
 import eventStatsSlice from "./eventStatsSlice";
 import profilesSlice from "./profilesSlice";
-import teamsSlice from "./teamsSlice";
+import profileSlice from "./profileSlice";
+import teamsSlice from "./teamsSlice";  
 import systemSlice from "./systemSlice";
 import profileStatsSlice from "./profileStatsSlice";
 import progressSlice from "./progressSlice";
@@ -20,6 +21,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
 
   // Teams and Profiles
   profilesSlice: profilesSlice,
+  profileSlice: profileSlice,
   teamsSlice: teamsSlice,
 
   // Stats

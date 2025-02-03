@@ -7,17 +7,22 @@ import { fetchProfiles } from "../store/profilesSlice";
 import { fetchTeamStats, fetchTeamStatsBreakdown } from "../store/teamStatsSlice";
 import { fetchProfileStats } from "../store/profileStatsSlice";
 import { fetchEvents } from "../store/eventsSlice";
+import { fetchProfile } from '../store/profileSlice';
 import { syncMyActivity } from "../store/progressSlice";
+import { selectUserID } from "../store/systemSlice";
+import { useSelector } from 'react-redux';
 
 export default function Index() {
   const { session, isReady, getSession } = useAuth();
   const dispatch = useTypedDispatch();
+  const UserID = useSelector(selectUserID)
 
   // We use this to key 
   const navigationState = useRootNavigationState();
 
   useEffect(() => {
-    dispatch(fetchProfiles());
+    //dispatch(fetchProfiles());
+    dispatch(fetchProfile(UserID))
     dispatch(fetchProfileStats());
     dispatch(fetchTeamStatsBreakdown());
     dispatch(fetchEvents());

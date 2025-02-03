@@ -12,14 +12,16 @@ const initialState: ProfilesState = {
   profiles: []
 }
 
-export const fetchProfiles = createAsyncThunk<SBProfile[], undefined, { rejectValue: string }>('events/fetchProfiles', async (_, { rejectWithValue }) => {
+export const fetchProfiles = createAsyncThunk<SBProfile[], undefined, { rejectValue: string }>('profiles/fetchProfiles', async (_, { rejectWithValue }) => {
   const { data, error } = await supabase
     .from('Profiles')
-    .select('*')
+    .select()
     .returns<SBProfile[] | null>();
   if (error) return rejectWithValue(error.message);
   return data ?? [];
 });
+
+
 
 const profilesSlice = createSlice({
   name: 'profiles',
@@ -27,6 +29,7 @@ const profilesSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchProfiles.fulfilled, (state, action) => {
+      console.log("Payload: ", action.payload)
       return { ...state, profiles: action.payload }
     })
   }
