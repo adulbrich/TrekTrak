@@ -6,30 +6,28 @@
   import { goto } from '$app/navigation';
 
   export let data;
-  export let form: {
+  export const form: {
     eventName?: string;
     eventType?: string;
     startDate?: string;
     endDate?: string;
     eventDescription?: string;
-    achievementsCount?: string;
-    achivements?: string;
-    eventBanner?: string;
+    AchievementsCount?: number;
+    Achivements?: string[];
   } = {};
 
-  let { session, supabase, event } = data;
-  $: ({ session, supabase, event } = data);
+  let { session, supabase, Event} = data;
+  $: ({ session, supabase, Event} = data);
 
   let createEventForm: HTMLFormElement;
   let loading = false;
-  let eventName: string = event?.event_name ?? "";
-  let eventType: string = event?.event_type ?? "Walk (steps)";
-  let startDate: string = event?.event_start_date ?? "";
-  let endDate: string = event?.event_end_date ?? "";
-  let eventDescription: string = event?.event_description ?? "";
-  let eventBanner: string = event?.event_banner ?? "";
-  let AchievementsCount: number = event?.AchievementCount ?? 0; // Default achievement count
-  let Tiers: string[] = [""]; // Default list of achievements
+  let eventName: string = Event?.Name ?? "";
+  let eventType: string = Event?.Type ?? "Walk (steps)";
+  let startDate: string = Event?.StartsAt ?? "";
+  let endDate: string = Event?.EndsAt ?? "";
+  let eventDescription: string = Event?.Description ?? "";
+  let AchievementsCount: number = Event?.AchievementCount ?? 0; // Default achievement count
+  let Achievements: string[] = [""]; // Default list of achievements
 
   export let eventDetails = {
     Description: data.Event?.Description,
@@ -39,25 +37,24 @@
     EventStartDate: data.Event?.StartsAt ? data.Event?.StartsAt.split('T')[0] : '', 
     EventEndDate: data.Event?.EndsAt ? data.Event?.EndsAt.split('T')[0] : '',
     EventID: data.Event?.EventID,
-    AchievementsCount: data.Event?.AchievementsCount,
+    AchievementsCount: data.Event?.AchievementCount,
+    Achievements: data.Event?.Achievements
   };
 
   $: {
-    if (AchievementsCount > Tiers.length) {
-      while (Tiers.length < AchievementsCount) Tiers.push("");
-    } else if (AchievementsCount < Tiers.length) {
-      Tiers = Tiers.slice(0, AchievementsCount);
+    if (AchievementsCount > Achievements.length) {
+      while (Achievements.length < AchievementsCount) Achievements.push("");
+    } else if (AchievementsCount < Achievements.length) {
+      Achievements = Achievements.slice(0, AchievementsCount);
     }
   }
+
+  $: Achievements = Array.from({ length: AchievementsCount }, (_, i) => Achievements[i] || "");
 
   const handleSubmit: SubmitFunction = async () => {
     loading = true;
     await updateEventDetails();
-    loading = false;  const handleSubmit: SubmitFunction = async () => {
-      loading = true;
-      await updateEventDetails();
-      loading = false;
-    };
+    loading = false;
     goto('/events');
   };
 
@@ -72,7 +69,8 @@
           StartsAt: eventDetails.EventStartDate,
           EndsAt: eventDetails.EventEndDate,
           Description: eventDetails.Description,
-          Achievements: Tiers,
+          AchievementsCount: eventDetails.AchievementsCount,
+          Achievements:  eventDetails.Achievements,
         })
         .eq('EventID', eventDetails.EventID);
 
@@ -84,7 +82,6 @@
       }
       loading = false;
   };
-
 
   
 </script>
@@ -175,7 +172,7 @@
             </label>
             <select
               id="AchievementsCount"
-              bind:value={eventDetails.AchievementsCount}
+              bind:value={AchievementsCount}
               class="bg-gray-50 border w-40 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             >
               {#each Array(7).fill(0).map((_, i) => i + 1) as count}
@@ -185,20 +182,21 @@
           </div>
 
           <!-- Inputs for achievements -->
-    <div class="mb-6">
-      <label class="block mb-2 text-sm font-medium text-gray-900">Achievements</label>
-      {#each Array(Number(AchievementsCount)) as _, index}
-        <div class="mb-3">
-          <input
-            type="text"
-            bind:value={Tiers[index]}
-            class="bg-gray-50 border w-40 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder={`Achievement ${index + 1}`}
-            required
-          />
-        </div>
-      {/each}
-    </div>
+          <div class="mb-6">
+            <label for="achievements"
+            class="block mb-2 text-sm font-medium text-gray-900">Achievements</label>
+            {#each Array(Number(AchievementsCount)) as _, index}
+              <div class="mb-3">
+                <input
+                  type="text"
+                  bind:value={Achievements[index]}
+                  class="bg-gray-50 border w-40 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  placeholder={`Achievement ${index + 1}`}
+                  required
+                />
+              </div>
+            {/each}
+          </div>
 
       <div class="px-2">
         <input
