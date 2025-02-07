@@ -1,84 +1,85 @@
 import {fail, redirect } from '@sveltejs/kit'
 
-export const load = async ({locals: {supabase, getSession }}: {locals: {supabase: any; getSession: () => Promise<any> }}) => {
-    const session = await getSession()
+export const load = async ({ locals: { supabase, getSession } }: { locals: { supabase: any; getSession: () => Promise<any> } }) => {
+  const session = await getSession();
 
-    if(!session) {
-        throw redirect(303, '/events')
-    }
+  if (!session) {
+    throw redirect(303, "/events");
+  }
 
-    const { data: event, error } = await supabase
-     .from('event')
-     .select(`event_name, event_type, event_start_date, event_end_date, event_description, event_banner`)
-     .eq('id', session.user.id)
-     .single()
-
-    if (error) {
-        console.error('Failed to fetch event:', error);
-    } else {
-        console.log('Event data successfully fetched');
-    }
-
-    return { session, event }
+  return { session }
 }
 
 export const actions = {
-    create: async ({
+  edit: async (event) => {
+    const {
       request,
       locals: { supabase, getSession },
-    }: {
-      request: any; 
-      locals: { supabase: any; getSession: () => Promise<any> };
-    }) => {
-      const formData = await request.formData();
-      const eventName = formData.get('eventName') as string;
-      const eventType = formData.get('eventType') as string;
-      const startDate = formData.get('startDate') as string;
-      const endDate = formData.get('endDate') as string;
-      const eventDescription = formData.get('eventDescription') as string;
-      const eventBanner = formData.get('eventBanner') as string;
-      const AchievementCount = formData.get("AchievementCount") as string;
-      const Achievements = Array.from({ length: parseInt(AchievementCount) }, (_, i) =>
-        formData.get(`Achievement ${i + 1}`) as string
-      );
+    } = event;
+    const session = await getSession();
 
-      const session = await getSession();
+    if (!session) {
+      return fail(403, { errorMessage: "User not authenticated." });
+    }
 
-      const { error } = await supabase.from('event').upsert({
-        id: session?.user.id,
-        event_name: eventName,
-        event_type: eventType,
-        event_start_date: startDate,
-        event_end_date: endDate,
-        event_description: eventDescription,
-        event_banner: eventBanner,
+    const formData = await request.formData();
+    const eventID = formData.get("eventID") as string; // Ensure EventID is retrieved correctly
+    const eventName = formData.get("eventName") as string;
+    const eventType = formData.get("eventType") as "Steps" | "Distance";
+    const startDate = formData.get("startDate") as string;
+    const endDate = formData.get("endDate") as string;
+    const eventDescription = formData.get("eventDescription") as string;
+    const AchievementCount = Number(formData.get("AchievementsCount"));
+    const Achievements = Array.from({ length: AchievementCount }, (_, i) =>
+      formData.get(`Achievement${i}`)
+    );
+
+    const eventBanner = formData.get("eventBanner") as File | null;
+
+    console.log("Updating event:", eventID, eventName);
+    console.log("Form data", formData);
+    console.log('Achievements', Achievements);
+    // Update event details in the database
+    const { error: editEventError, data: editEventData } = await supabase
+      .from("Events")
+      .update({
+        Name: eventName,
+        Type: eventType,
+        StartsAt: startDate,
+        EndsAt: endDate,
+        Description: eventDescription,
         AchievementCount: AchievementCount,
-        Achievements: Achievements,
-        updated_at: new Date(),
-      });
+        Achievements: Achievements
+      })
+      .eq("EventID", eventID)
+      .select();
+    
+    console.log(editEventData);
 
-      if (error) {
-        return fail(500, {
-          eventName,
-          eventType,
-          startDate,
-          endDate,
-          eventDescription,
-          eventBanner,
-          AchievementCount,
-          Achievements,
+    if (editEventError) {
+      console.log("Failed to update event:", editEventError.message);
+      return fail(500, { errorMessage: editEventError.message });
+    }
+
+    // Upload banner only if a new file is provided
+    if (eventBanner) {
+      const { error: uploadBannerError } = await supabase.storage
+        .from("EventAssets")
+        .upload(`Banners/${eventID}`, eventBanner, {
+          contentType: eventBanner.type,
+          upsert: true, // Overwrite if it already exists
         });
-      }
 
-      return {
-        eventName,
-        eventType,
-        startDate,
-        endDate,
-        eventDescription,
-        eventBanner,
-        AchievementCount,
-        Achievements,
-      };
-    },
-  };
+      if (uploadBannerError) {
+        console.log("Failed to upload banner:", uploadBannerError.message);
+        return fail(500, { errorMessage: uploadBannerError.message });
+      }
+    }
+
+    console.log("Successfully updated event");
+    return { success: true };
+  },
+};
+
+
+  

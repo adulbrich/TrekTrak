@@ -78,6 +78,9 @@ export interface Database {
           StartsAt: string
           Type: Database["public"]["Enums"]["ActivityTypes"]
           UpdatedAt: string
+          Description: string
+          AchievementCount: number
+          Achievements: string[]
         }
         Insert: {
           CreatedAt?: string
@@ -88,6 +91,9 @@ export interface Database {
           StartsAt: string
           Type: Database["public"]["Enums"]["ActivityTypes"]
           UpdatedAt?: string
+          Description: string
+          AchievementCount: number
+          Achievements: string[]
         }
         Update: {
           CreatedAt?: string
@@ -98,6 +104,9 @@ export interface Database {
           StartsAt?: string
           Type?: Database["public"]["Enums"]["ActivityTypes"]
           UpdatedAt?: string
+          Description: string
+          AchievementCount: number
+          Achievements: string[]
         }
         Relationships: [
           {

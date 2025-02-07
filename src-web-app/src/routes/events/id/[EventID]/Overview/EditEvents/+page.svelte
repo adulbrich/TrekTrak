@@ -6,30 +6,28 @@
   import { goto } from '$app/navigation';
 
   export let data;
-  export let form: {
+  export const form: {
     eventName?: string;
     eventType?: string;
     startDate?: string;
     endDate?: string;
     eventDescription?: string;
-    achievementsCount?: string;
-    achivements?: string;
-    eventBanner?: string;
+    AchievementsCount?: number;
+    Achivements?: string[];
   } = {};
 
-  let { session, supabase, event } = data;
-  $: ({ session, supabase, event } = data);
+  let { session, supabase, Event} = data;
+  $: ({ session, supabase, Event} = data);
 
   let createEventForm: HTMLFormElement;
   let loading = false;
-  let eventName: string = event?.event_name ?? "";
-  let eventType: string = event?.event_type ?? "Walk (steps)";
-  let startDate: string = event?.event_start_date ?? "";
-  let endDate: string = event?.event_end_date ?? "";
-  let eventDescription: string = event?.event_description ?? "";
-  let eventBanner: string = event?.event_banner ?? "";
-  let AchievementsCount: number = event?.AchievementCount ?? 0; // Default achievement count
-  let Tiers: string[] = [""]; // Default list of achievements
+  let eventName: string = Event?.Name ?? "";
+  let eventType: string = Event?.Type ?? "Walk (steps)";
+  let startDate: string = Event?.StartsAt ?? "";
+  let endDate: string = Event?.EndsAt ?? "";
+  let eventDescription: string = Event?.Description ?? "";
+  let AchievementsCount: number = Event?.AchievementCount ?? 0; // Default achievement count
+  let Achievements: string[] = Event?.Achievements ?? [""]; // Default list of achievements
 
   export let eventDetails = {
     Description: data.Event?.Description,
@@ -39,50 +37,45 @@
     EventStartDate: data.Event?.StartsAt ? data.Event?.StartsAt.split('T')[0] : '', 
     EventEndDate: data.Event?.EndsAt ? data.Event?.EndsAt.split('T')[0] : '',
     EventID: data.Event?.EventID,
-    AchievementsCount: data.Event?.AchievementsCount,
+    AchievementsCount: data.Event?.AchievementCount,
+    Achievements: data.Event?.Achievements
   };
 
   $: {
-    if (AchievementsCount > Tiers.length) {
-      while (Tiers.length < AchievementsCount) Tiers.push("");
-    } else if (AchievementsCount < Tiers.length) {
-      Tiers = Tiers.slice(0, AchievementsCount);
+    if (AchievementsCount > Achievements.length) {
+      while (Achievements.length < AchievementsCount) Achievements.push("");
+    } else if (AchievementsCount < Achievements.length) {
+      Achievements = Achievements.slice(0, AchievementsCount);
     }
   }
 
-  const handleSubmit: SubmitFunction = async () => {
-    loading = true;
-    await updateEventDetails();
-    loading = false;  const handleSubmit: SubmitFunction = async () => {
-      loading = true;
-      await updateEventDetails();
-      loading = false;
-    };
-    goto('/events');
-  };
+  $: Achievements = Array.from({ length: AchievementsCount }, (_, i) => Achievements[i] || "");
 
-  const updateEventDetails = async () => {
-      loading = true;
+  let successMessage = "";
+  let showSuccess = false;
 
-      const { data: updatedData, error } = await supabase
-        .from('Events')
-        .update({
-          Name: eventDetails.EventName,
-          Type: eventDetails.EventType,
-          StartsAt: eventDetails.EventStartDate,
-          EndsAt: eventDetails.EventEndDate,
-          Description: eventDetails.Description,
-          Achievements: Tiers,
-        })
-        .eq('EventID', eventDetails.EventID);
+  const handleSubmit: SubmitFunction = async ({ form, data }) => {
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: data,
+      });
 
-      if (error) {
-        console.error('Error updating event:', error);
-        alert('Failed to update event.');
+      if (response.ok) {
+        successMessage = "Event updated successfully! Please go back to the previous page to look for the changes.";
+        showSuccess = true;
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => (showSuccess = false), 3000);
       } else {
-        console.log('Event updated successfully:', updatedData);
+        throw new Error("Failed to update the event.");
       }
-      loading = false;
+    } catch (error) {
+      successMessage = "Failed to update the event. Please try again.";
+      showSuccess = true;
+
+      setTimeout(() => (showSuccess = false), 3000);
+    }
   };
 
 
@@ -105,57 +98,60 @@
     </div>
   </div>
 
-
-
   <div class="p-7 h-auto">
     <!--Form Attributes-->
-    <form class="form-widget flex-1 ml-[17%]" method="post" action="?/create" use:enhance={handleSubmit} bind:this={createEventForm}>
-      <div class="flex flex-wrap -mx-3 mb-6">
-        <a href="/events" style="margin-left: 10px; margin-top:15px;">
-            
-        </a>
-        <!--Header-->
-        <div class="w-full">
-
-        </div>
+    <div class="form-widget flex-1 ml-[17%] flex flex-wrap -mx-3 mb-6">
+      <a href="/events" style="margin-left: 10px; margin-top:15px;">   
+      </a>
+      <!--Header-->
+      <div class="w-full">
+    </div>
         
-        <form>
-            <!-- Grid container for the first row with two columns -->
-            <div class="grid grid-cols-3 gap-6 mb-6 ml-4">
-                <!--Container for Event Name-->
-              <div>
-                <label for="eventName" class="block mb-2 text-sm font-medium text-gray-900 ">Event Name</label>
-                <input type="text" id="eventName" name="eventName"
-                  bind:value={eventDetails.EventName}
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  placeholder="Event Name" required />
-              </div>
+      <form method='POST' action='?/edit' use:enhance={handleSubmit}>
+        {#if showSuccess}
+          <div class="success-message bg-green-500 text-white text-center py-2 rounded-md mb-4">
+            {successMessage}
+          </div>
+        {/if}
 
-                <!--Container for Event Type Dropdown-->
-              <div>
-                <label for="eventType" class="block mb-2 text-sm font-medium text-gray-900 ">Event Type</label>
-                <select id="eventType" name="eventType" bind:value={eventDetails.EventType}
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-                  <option>Walk (Steps)</option>
-                  <option>Run (Distance)</option>
-                </select>
-              </div>
+          <!-- Grid container for the first row with two columns -->
+          <div class="grid grid-cols-3 gap-6 mb-6 ml-4">
+            <input type="hidden" id="eventID" name="eventID"
+            bind:value={eventDetails.EventID}/>
+            <!--Container for Event Name-->
+            <div>
+              <label for="eventName" class="block mb-2 text-sm font-medium text-gray-900 ">Event Name</label>
+              <input type="text" id="eventName" name="eventName"
+                bind:value={eventDetails.EventName}
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="Event Name" required />
             </div>
 
-            <!-- Grid container for the second row with two columns -->
-            <div class="grid grid-cols-3 gap-6 mb-6  ml-4">
-                <!--Container for Start Date Input-->
-                <div>
-                    <label for="startDate" class="block mb-2 text-sm font-medium text-gray-900 ">Start Date</label>
-                    <input type="date" id="startDate" name="startDate" bind:value={eventDetails.EventStartDate} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
-                </div>
-
-                <!--Container for End Date Input-->
-                <div>
-                    <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900 ">End Date</label>
-                    <input type="date" id="endDate" name="endDate" bind:value={eventDetails.EventEndDate} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
-                </div>
+            <!--Container for Event Type Dropdown-->
+            <div>
+              <label for="eventType" class="block mb-2 text-sm font-medium text-gray-900 ">Event Type</label>
+              <select id="eventType" name="eventType" bind:value={eventDetails.EventType}
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                <option selected>Steps</option>
+                <option>Distance</option>
+              </select>
             </div>
+          </div>
+
+          <!-- Grid container for the second row with two columns -->
+          <div class="grid grid-cols-3 gap-6 mb-6  ml-4">
+              <!--Container for Start Date Input-->
+              <div>
+                  <label for="startDate" class="block mb-2 text-sm font-medium text-gray-900 ">Start Date</label>
+                  <input type="date" id="startDate" name="startDate" bind:value={eventDetails.EventStartDate} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
+              </div>
+
+              <!--Container for End Date Input-->
+              <div>
+                  <label for="endDate" class="block mb-2 text-sm font-medium text-gray-900 ">End Date</label>
+                  <input type="date" id="endDate" name="endDate" bind:value={eventDetails.EventEndDate} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
+              </div>
+          </div>
 
           <!--Container for Event Description Input-->
           <div class="col-span-3  ml-4">
@@ -174,8 +170,9 @@
               Number of Achievements
             </label>
             <select
+              name="AchievementsCount"
               id="AchievementsCount"
-              bind:value={eventDetails.AchievementsCount}
+              bind:value={AchievementsCount}
               class="bg-gray-50 border w-40 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             >
               {#each Array(7).fill(0).map((_, i) => i + 1) as count}
@@ -185,46 +182,36 @@
           </div>
 
           <!-- Inputs for achievements -->
-    <div class="mb-6">
-      <label class="block mb-2 text-sm font-medium text-gray-900">Achievements</label>
-      {#each Array(Number(AchievementsCount)) as _, index}
-        <div class="mb-3">
+          <div class="mb-6">
+            <label for="achievements"
+            class="block mb-2 text-sm font-medium text-gray-900">Achievements</label>
+            {#each Array(Number(AchievementsCount)) as _, index}
+              <div class="mb-3">
+                <input
+                  name={'Achievement'+index}
+                  type="text"
+                  bind:value={Achievements[index]}
+                  class="bg-gray-50 border w-40 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  placeholder={Achievements[index]}
+                />
+              </div>
+            {/each}
+          </div>
+
+        <div class="px-2">
           <input
-            type="text"
-            bind:value={Tiers[index]}
-            class="bg-gray-50 border w-40 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder={`Achievement ${index + 1}`}
-            required
+            type="submit"
+            class="btn  text-white primary hover:bg-dark-orange bg-beaver-orange appearance-none py-3 px-4 mb-3 "
+            value={loading ? "Loading.." : "Edit"}
+            disabled={loading}
           />
         </div>
-      {/each}
+
+      </form>
     </div>
-
-      <div class="px-2">
-        <input
-          type="submit"
-          class="btn  text-white primary hover:bg-dark-orange bg-beaver-orange appearance-none py-3 px-4 mb-3 "
-          value={loading ? "Loading.." : "Edit"}
-          disabled={loading}
-        />
-      </div>
-    </form>
   </div>
-  </form>
-</div>
-<style>
 
-.header-style {
-    font-style: normal;
-    font-weight: 628;
-    font-size: 28px;
-    line-height: 44px;
-  }
-  .active {
-    background-color: #4A708B; /* Softer blue */
-    border-radius: 5px;
-    color: white; /* Ensuring text is easily readable */
-  }
+<style>
   .flex.items-center {
     display: flex;
     align-items: center; /* Vertically aligns the items in the center */
