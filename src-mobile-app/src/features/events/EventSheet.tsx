@@ -6,7 +6,7 @@ import { Adapt, Button, H1, H2, H3, Select, YStack, XStack, Text, useTheme, Text
 import { SBTeam, Tables } from '../../lib/supabase-types';
 import { EventsState, setActiveEvent } from '../../store/eventsSlice';
 import { RootState, useTypedDispatch } from '../../store/store';
-import { TeamsState, fetchTeams } from '../../store/teamsSlice';
+import { TeamsState, fetchTeams, joinTeam } from '../../store/teamsSlice';
 import { LinearGradient } from 'tamagui/linear-gradient';
 import React from 'react';
 import { TextInput, Keyboard, TouchableWithoutFeedback, Text as RN_Text} from 'react-native';
@@ -20,6 +20,7 @@ import TeamCard from '../teams/TeamCard';
 import { setGestureState } from 'react-native-reanimated';
 import { v4 as uuidv4 } from 'uuid';
 import { createTeam } from '../../store/teamsSlice';
+import { selectProfile } from "../../store/profileSlice";
 
 
 
@@ -87,6 +88,11 @@ export default function EventDetailsSheet( {team} : Props) {
     dispatch(createTeam({ name: teamName, eventID: activeEvent.EventID }))
       .then((resultAction) => {
         if (createTeam.fulfilled.match(resultAction)) {
+          //add user to team they created
+          // const teamID = resultAction.payload.TeamID;
+          // const myProfile = useSelector(selectProfile);
+          // dispatch(joinTeam({profileID: myProfile.ProfileID, teamID: teamID}))
+
 
           // Team creation succeeded
           console.log('New team created:', resultAction.payload);
@@ -135,19 +141,19 @@ export default function EventDetailsSheet( {team} : Props) {
       <Sheet.Frame>
         <Sheet.Handle />
         <YStack>
-          <YStack paddingBottom="$12" paddingTop="0%" alignItems="center">
+          <YStack paddingBottom="$5" paddingTop="0%" alignItems="center">
             {showJoinOptions ? (
               <>
                 <H2 paddingBottom="$3">Registration</H2>
-                <Text color="white" paddingBottom="$12">- Select an option to register for a team -</Text>
-                <XStack justifyContent="center" paddingBottom="$20">
+                <Text color="black" paddingBottom="$5">- Select an option to register for a team -</Text>
+                <YStack justifyContent="center" paddingBottom="$5">
                   <Button
                     bg={'#81c746'} 
                     color={'white'} 
-                    height="$13"
-                    width="$12"
-                    marginRight="$3"
+                    height="$5"
+                    width="$20"
                     fontSize="$8"
+                    marginBottom="$2"
                     onPress={registrationOptions}
                   >
                     Join
@@ -155,15 +161,15 @@ export default function EventDetailsSheet( {team} : Props) {
                   <Button
                     bg={'#81c746'} 
                     color={'white'} 
-                    height="$13"
-                    width="$12"
-                    marginLeft="$3"
+                    height="$5"
+                    width="$20"
                     fontSize="$8"
+                    marginBottom="$2"
                     onPress={createTeamOption}
                   >
                     Create
                   </Button>
-                </XStack>
+                </YStack>
               </>
             ) : showCreateOptionsView ? (
               <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -202,12 +208,12 @@ export default function EventDetailsSheet( {team} : Props) {
                       
                       <XStack padding="$15">
                         <Button
-                          bg={'#eb7434'}
+                          bg={'#81c746'}
                           color={'white'}
                           fontSize="$6"
                           height="$5"
                           width="$14"
-                          borderRadius="$10"
+                          borderRadius="$4"
                           pressStyle={{ opacity: 1 }} // Optional: Adjust opacity on press
                           onPress={handleRegister}
                         >

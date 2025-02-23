@@ -55,6 +55,7 @@ export default function TeamCard({ team }: Props) {
 
 				if(error && status == 409){
 					console.log('You\'re already registered for this team!');
+					alert("You've already joined this team!");
 					return;
 				}
 				console.log('User joined the team successfully:');

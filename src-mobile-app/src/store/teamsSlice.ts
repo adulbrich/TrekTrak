@@ -2,7 +2,7 @@ import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { supabase } from '../lib/supabase';
 import { RootState } from './store';
 import { selectMyOngoingEvents } from './eventsSlice';
-import { SBTeam } from '../lib/models';
+import { SBTeam, SBTeamsProfiles } from '../lib/models';
 
 export interface TeamsState {
   teams: SBTeam[]
@@ -62,6 +62,25 @@ export const createTeam = createAsyncThunk<
   if (error) return rejectWithValue(error.message);
   return data;
 });
+
+export const joinTeam = createAsyncThunk<
+  SBTeamsProfiles,
+  { profileID: string, teamID: string },
+  { rejectValue: string }
+>('events/joinTeam', async ({ profileID, teamID }, { rejectWithValue }) => {
+  const { data, error } = await supabase
+    .from('TeamsProfiles')
+    .insert({
+      TeamID: teamID,
+      ProfileID: profileID
+    })
+    .select()
+    .single();
+  if (error) return rejectWithValue(error.message);
+  return data;
+});
+
+
 
 const teamsSlice = createSlice({
   name: 'teams',

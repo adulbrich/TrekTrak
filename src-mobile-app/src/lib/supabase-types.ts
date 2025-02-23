@@ -132,6 +132,10 @@ export type Database = {
           StartsAt: string
           Type: Database["public"]["Enums"]["ActivityTypes"]
           UpdatedAt: string
+          RewardSingular: string
+          RewardPlural: string
+          Achievements: string[]
+          AchievementCount: number
         }
         Insert: {
           CreatedAt?: string
@@ -143,6 +147,10 @@ export type Database = {
           StartsAt: string
           Type: Database["public"]["Enums"]["ActivityTypes"]
           UpdatedAt?: string
+          RewardSingular: string
+          RewardPlural: string
+          Achievements: string[]
+          AchievementCount: number
         }
         Update: {
           CreatedAt?: string
@@ -154,6 +162,10 @@ export type Database = {
           StartsAt?: string
           Type?: Database["public"]["Enums"]["ActivityTypes"]
           UpdatedAt?: string
+          RewardSingular: string
+          RewardPlural: string
+          Achievements: string[]
+          AchievementCount: number
         }
         Relationships: [
           {
