@@ -1,6 +1,4 @@
-import {fail, redirect } from '@sveltejs/kit'
-
-
+import {Actions, fail, redirect } from '@sveltejs/kit'
 
 export const load = (async({locals: { supabase, getSession } , params }) => {
   
@@ -44,3 +42,30 @@ export const load = (async({locals: { supabase, getSession } , params }) => {
   
   return { session ,eventDetails, teamsWithMembers, testsigned};
 });
+
+export const actions = {
+  deleteEvent: async (event) => {
+    const {
+      request,
+      locals: {supabase}
+    } = event;
+    const formData = await request.formData();
+    const eventId = formData.get('eventId') as string;
+    const response = await supabase
+      .from('Events')
+      .delete()
+      .eq('EventID', eventId);
+    
+    console.log("Deleting event. EventId: ", eventId)
+    if(response.status != 204) {
+      console.log("Error. Response: ", response);
+      return fail(500, {
+        errorMessage: "Supabase was not able to fulfill the delete request: " + response.error?.message
+      })
+    }
+    console.log("Successfully deleted event. EventId: ", eventId);
+    return {
+      errorMessage: null
+    }
+  }
+} satisfies Actions;

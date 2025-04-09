@@ -1,12 +1,34 @@
-<script>
+<script lang="ts">
   import Layout from "../../../../banner-layout.svelte";
   export let data;
+  export let form;
 
-
+  import { enhance, applyAction } from "$app/forms";
   import { goto } from '$app/navigation';
+  import type { SubmitFunction } from "@sveltejs/kit";
+  import toast from "svelte-french-toast";
 
   function goToEditEventPage() {
     goto(`/events/id/${data.eventDetails?.EventID}/Overview/EditEvents`, { replace: false });
+  }
+  
+  $: if (form) {
+    console.log("GUCCI")
+    if (form.errorMessage) toast.error(form.errorMessage);
+    else {
+      alert("The event was deleted successfully!");
+      goto(`/events`);
+    }
+  }
+
+  const handleDeleteEvent: SubmitFunction = async({ cancel }) => {
+    if(confirm('Are you sure you want to delete the event?')) {
+      return async ({ result }) => {
+        return await applyAction(result);
+      };
+    } else {
+      cancel();
+    }
   }
   
 </script>
@@ -93,6 +115,10 @@
 
   <div>
     <button class="btn-primary bg-[#81c745] hover:bg-[#81c745]" on:click={goToEditEventPage}>Edit Event</button>
+    <form method="POST" action="?/deleteEvent" use:enhance={handleDeleteEvent}>
+      <input name="eventId" type="eventId" value={data.eventDetails?.EventID} hidden>
+      <button class="btn-primary bg-[#ff5e32] hover:bg-[#e69a5a]">Delete Event</button>
+    </form>
   </div>
 </div>
 
