@@ -5,6 +5,7 @@
   export let data;
   import Card from "./CategoryEventCard.svelte";
   import SearchBar from "./EventSearchBar.svelte";
+  import { goto } from '$app/navigation';
   import type { EventNameAndID } from "../../interfaces";
   let { supabase, pastEvents, upcomingEvents, ongoingEvents, events } = data;
   $: ({ supabase } = data);
@@ -51,6 +52,12 @@
       event.Exists = true;
     });
   }
+
+  const handleSignOut = async () => {
+        await supabase.auth.signOut();
+        goto('/');
+    };
+    
 </script>
 
 <svelte:head>
@@ -112,6 +119,11 @@
             Add Users
           </button>
         </a>
+        <button
+        on:click={handleSignOut}
+        class="mt-6 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            Logout
+        </button>
       </div>
       <div class="flex flex-col items-start ml-20" style="margin-top: 19px;">
         <!-- Create Event button -->

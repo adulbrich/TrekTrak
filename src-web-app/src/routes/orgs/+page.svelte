@@ -27,6 +27,37 @@
     let showErrorModal = false; // Modal visibility
     let errorMessage = ""; // Modal message
 
+    let userRole: "participant" | "admin" | "developer" | null = null;
+    let accessDenied = false;
+
+    // Fetch the logged-in user's role
+    const fetchUserRole = async () => {
+        if (!session?.user?.id) {
+            accessDenied = true;
+            return;
+        }
+
+        const { data: profile, error } = await supabase
+            .from("Profiles")
+            .select("Role")
+            .eq("ProfileID", session.user.id)
+            .single();
+
+        if (error || !profile) {
+            console.error("Error fetching user role:", error);
+            accessDenied = true;
+            return;
+        }
+
+        userRole = profile.Role;
+        if (userRole !== "developer") {
+            console.log("Role is: ", userRole)
+            accessDenied = true;
+        }
+    };
+
+    fetchUserRole();
+
     const fetchOrganizations = async () => {
         const { data: orgData, error } = await supabase
             .from("Organizations")
@@ -91,6 +122,14 @@
 </script>
 
 <Layout>
+    {#if accessDenied}
+        <div class="flex justify-center items-center h-screen">
+            <p class="text-2xl font-bold text-red-600">Only Developers Can Access This Page. </p>
+            {#if userRole}
+            <p class="text-2xl font-bold text-red-600"> {"Currently Logged in as:  " + userRole}.</p>
+            {/if}
+        </div>
+    {:else}
     <div class="flex flex-col h-full justify-start mx-auto max-w-2xl">
         <!-- Form Section -->
         <div class="flex flex-col mt-10 mb-8">
@@ -166,4 +205,5 @@
             </div>
         {/if}
     </div>
+    {/if}
 </Layout>

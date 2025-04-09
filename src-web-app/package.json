@@ -32,7 +32,6 @@
 		"@supabase/supabase-js": "^2.38.4",
 		"daisyui": "^4.6.2",
 		"frappe-charts": "^1.6.2",
-		"papaparse": "^5.5.2",
 		"svelte-frappe-charts": "^1.10.0",
 		"svelte-french-toast": "^1.2.0",
 		"uuid": "^11.0.5",
