@@ -5,6 +5,7 @@
   import type { SubmitFunction } from "@sveltejs/kit";
   import toast from "svelte-french-toast";
   import RewardTierInput from "./RewardTierInput.svelte";
+  import { goto } from "$app/navigation";
   export let data;
   export let form;
 
@@ -12,8 +13,13 @@
   $: ({ session, supabase } = data); // Listen to changes in supabase
 
   $: if (form) {
-    if (form.errorMessage) toast.error(form.errorMessage);
-    else toast.success("Event created!");
+    if (form.errorMessage) {
+      toast.error(form.errorMessage);
+    }
+    else { 
+      toast.success("Event created!");
+      goto(`/events`);
+    }
   }
 
   let createEventForm: HTMLFormElement;
