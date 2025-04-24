@@ -77,7 +77,7 @@ export const actions = {
     }
 
     console.log("Successfully updated event");
-    return { success: true };
+    return { errorMessage: null};
   },
 };
 
