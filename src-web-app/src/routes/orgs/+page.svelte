@@ -27,7 +27,7 @@
     let showErrorModal = false; // Modal visibility
     let errorMessage = ""; // Modal message
 
-    let userRole: "participant" | "admin" | "developer" | null = null;
+    let userRole: "participant" | "admin" | null = null;
     let accessDenied = false;
 
     // Fetch the logged-in user's role

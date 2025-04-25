@@ -105,18 +105,18 @@
           </button>
         </a>
         <!-- View Organizations button -->
-        <a href="/orgs">
+        <!-- <a href="/orgs">
           <button 
             class="btn btn-sm font-normal h-9 font-sans hover:bg-dark-orange text-white rounded-full" 
             style="background-color: #81c745; margin-bottom: 10px;">
             View Organizations
           </button>
-        </a>
+        </a> -->
         <a href="/users">
           <button 
             class="btn btn-sm font-normal h-9 font-sans hover:bg-dark-orange text-white rounded-full" 
             style="background-color: #81c745;">
-            Add Users
+            Add Profile
           </button>
         </a>
         <button

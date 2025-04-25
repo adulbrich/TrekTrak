@@ -40,7 +40,7 @@ export const load = (async({locals: { supabase, getSession } , params }) => {
     Profiles (ProfileID, Name)`)
   .eq('BelongsToEventID', EventID);
   
-  return { session ,eventDetails, teamsWithMembers, testsigned};
+  return { session ,eventDetails, Teams: teamsWithMembers, testsigned};
 });
 
 export const actions = {

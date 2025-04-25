@@ -64,8 +64,20 @@
     <h1 class="text-3xl font-semi-bold mt-4">Description</h1>
     <div class="w-1/2 mt-3">
       <p class="text-lg">{data.Event?.Description}</p>
+
+      <div
+      class="stats shadow flex items-center mt-[3%]"
+      style="width: fit-content;"
+    >
+      <div class="stat place-items-center">
+        <div class="stat-title">Current Event Participants</div>
+        <div class="stat-value">{data.Teams.length}</div>
+      </div>
+    </div>
+
     </div>
   </div>
+
   <!-- Container for when it starts and ends -->
   <div class="ml-[2%] mt-6">
     <h2 class="text-3xl font-semi-bold mt-4">When it Starts and Ends</h2>
