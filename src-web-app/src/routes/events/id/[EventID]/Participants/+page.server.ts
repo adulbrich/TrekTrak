@@ -22,9 +22,8 @@ export const load = async ({ locals: { supabase, getSession }, params }) => {
   .select(
     `
     Name,
-    Teams (BelongsToEventID)
-    `
-  )
+    Teams!inner(BelongsToEventID)
+    `)
   .eq('Teams.BelongsToEventID', EventID);
 
   if (error) {
