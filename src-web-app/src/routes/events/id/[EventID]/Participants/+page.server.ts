@@ -25,9 +25,10 @@ export const load = async ({ locals: { supabase, getSession }, params }) => {
     Teams!inner(BelongsToEventID)
     `)
   .eq('Teams.BelongsToEventID', EventID);
-
+  
   if (error) {
     console.log('Error getting profiles: ', error);
+    return { session, Event, errorMessage: error.message };
   } else {
     console.log('Returned data: ', Profiles);
   }

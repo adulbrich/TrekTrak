@@ -51,6 +51,16 @@
         </tr>
       </thead>
       <tbody>
+        <!-- Check for errors -->
+        {#if data.errorMessage}
+        <tr class="border border-gray-300 team-row w-full" style="transition: all 0.3s ease-out;">
+          <td class="px-4 py-2 cursor-pointer">
+            <div class="w-full">
+              <span class="text-lg">Failed to retrieve participants: {data.errorMessage}</span>
+            </div>
+          </td>
+        </tr>
+        {:else}
         <!--Loop through each paricipant-->
         {#each data.Profiles as profile (profile.ProfileID)}
           <tr class="border border-gray-300 team-row w-full" data-id={profile.ProfileID} style="transition: all 0.3s ease-out;">
@@ -61,6 +71,7 @@
             </td>
           </tr>
         {/each}
+        {/if}
       </tbody>
     </table>
   </div>
