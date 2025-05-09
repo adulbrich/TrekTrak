@@ -8,10 +8,12 @@ import { TeamStats } from "../../lib/models";
 import { selectUserID } from "../../store/systemSlice";
 import { selectMyOngoingEvents } from "../../store/eventsSlice";
 import { Button } from "tamagui";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router"
 
 export default function Team() {
-  const navigation = useNavigation(); // React Navigation hook for navigation
+  // const navigation = useNavigation(); // React Navigation hook for navigation
+  const router = useRouter();
   const myTeamStats = useTypedSelector(selectTeamStatsBreakdown);
   const userID = useTypedSelector(selectUserID);
   const myOngoingEvents = useTypedSelector(selectMyOngoingEvents);
@@ -70,7 +72,7 @@ export default function Team() {
         <Button
           bg={"#426B1F"}
           color={"#FFFFFF"}
-          onPress={() => navigation.navigate("TeamLeaderboards")} // Replace with actual leaderboard route
+          onPress={() => router.push("/TeamLeaderboards")} // Replace with actual leaderboard route
           style={styles.button}
         >
           Team Leaderboards

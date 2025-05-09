@@ -7,10 +7,12 @@ import { selectProfile } from "../../store/profileSlice";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../features/system/Auth";
 import { useSelector } from 'react-redux';
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 const Profile = () => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
+  const router = useRouter();
   const auth = useAuth();
   const myProfileStats = useTypedSelector(selectMyProfileStats);
   const myProfile = useSelector(selectProfile);
@@ -82,7 +84,7 @@ const Profile = () => {
           <Button
             bg={"#426B1F"}
             color={"#FFFFFF"}
-            onPress={() => navigation.navigate("IndividualLeaderboards")} // Navigate to individual leaderboard
+            onPress={() => router.push('/IndividualLeaderboards')} // Navigate to individual leaderboard
           >
             View Individual Leaderboard
           </Button>
