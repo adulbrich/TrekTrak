@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistCombineReducers, persistStore } from "redux-persist";
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import { useDispatch, useSelector, useStore } from "react-redux";
+import teamLeaderboardSlice from "./teamLeaderboardSlice";
 
 const persistConfig = { key: 'redux-root', storage: AsyncStorage };
 
@@ -28,6 +29,9 @@ const rootReducer = persistCombineReducers(persistConfig, {
   teamStatsSlice: teamStatsReducer,
   eventStatsSlice: eventStatsSlice,
   profileStatsSlice: profileStatsSlice,
+
+  //Leaderboard
+  teamLeaderboardSlice: teamLeaderboardSlice,
 
   // System
   systemSlice: systemSlice,
