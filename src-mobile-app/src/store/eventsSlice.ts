@@ -58,7 +58,7 @@ export const fetchMyEvents = createAsyncThunk<SBEvent[], undefined, { rejectValu
   async (_, { rejectWithValue, getState }) => {
     console.log('fetchMyEvents()');
     // Extract user ID from system slice
-    const userID = (getState() as RootState).systemSlice.userID;
+    const userID: any = (getState() as RootState).systemSlice.userID;
     if (!userID) return rejectWithValue('User ID not found');
 
     // Find relevent events
@@ -79,6 +79,52 @@ export const fetchMyEvents = createAsyncThunk<SBEvent[], undefined, { rejectValu
   }
 );
 
+export const fetchCurrentEvents = createAsyncThunk(
+  'events/fetchCurrentEvents',
+  async (userID: string | null, thunkAPI) => { 
+      console.log("Fetching Events for User: ", userID)
+      
+      //first get all the team IDs the user is associated with
+      const { data: teamIDs, error: teamsProfilesError } = await supabase
+        .from('TeamsProfiles')
+        .select('TeamID')
+        .eq('ProfileID', userID ?? "")
+
+      if (teamsProfilesError) {
+        console.error('Error fetching team IDs:', teamsProfilesError)
+        return []
+      }   
+
+      const teamIDsArray = teamIDs.map(item => item.TeamID);
+
+      //next, get all associated events that match with the team IDs
+      const { data: eventIDs, error: teamsError} = await supabase
+        .from('Teams')
+        .select('BelongsToEventID')
+        .in('TeamID', teamIDsArray)
+
+        if (teamsError) {
+          console.error('Error fetching event IDs:', teamsError)
+          return []
+        } 
+
+        const eventIDsArray = eventIDs.map(item => item.BelongsToEventID);
+
+        //now that we have the event IDs of the events the user is participating in, get the event info for all of them
+      const { data: events, error: eventsError } = await supabase
+        .from('Events')
+        .select('*')
+        .in('EventID', eventIDsArray)
+
+        if (eventsError) {
+          console.error('Error fetching events', eventsError)
+          return []
+        } 
+
+      return events
+  }
+)
+
 // Create the events slice
 const eventsSlice = createSlice({
   name: 'events',
@@ -96,9 +142,13 @@ const eventsSlice = createSlice({
       return { ...state, events: action.payload }
     });
 
-    builder.addCase(fetchMyEvents.fulfilled, (state, action) => {
+    builder.addCase(fetchCurrentEvents.fulfilled, (state, action) => {
       return { ...state, myEvents: action.payload }
     });
+
+    // builder.addCase(fetchCurrentEvents.fulfilled, (state, action) => {
+    //   state.myEvents = action.payload
+    // })
   }
 });
 
@@ -127,11 +177,9 @@ export const selectEvents = createSelector(
   (state) => state.events
 );
 
-// Select the current user profile
-export const selectMyEvents = createSelector(
-  selectSelf,
-  (state) => state.myEvents
-);
+
+export const selectMyEvents = (state: RootState) => state.eventsSlice.myEvents;
+
 
 // Select the current user profile
 export const selectMyOngoingEvents = createSelector(

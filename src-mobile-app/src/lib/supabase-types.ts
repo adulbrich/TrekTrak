@@ -234,6 +234,7 @@ export type Database = {
           Name: string
           TeamID: string
           UpdatedAt: string
+          RewardCount: number
         }
         Insert: {
           BelongsToEventID: string
@@ -241,6 +242,7 @@ export type Database = {
           Name: string
           TeamID?: string
           UpdatedAt?: string
+          RewardCount: number
         }
         Update: {
           BelongsToEventID?: string
@@ -248,6 +250,7 @@ export type Database = {
           Name?: string
           TeamID?: string
           UpdatedAt?: string
+          RewardCount: number
         }
         Relationships: [
           {
