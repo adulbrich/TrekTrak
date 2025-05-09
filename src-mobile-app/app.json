@@ -20,6 +20,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.capucity.trektrak",
+      "version": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/osu_badge.png",
         "backgroundColor": "#FFFFFF"
