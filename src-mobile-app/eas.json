@@ -1,4 +1,8 @@
 {
+  "cli": {
+    "version": ">= 14.4.1",
+    "appVersionSource": "remote"
+  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -7,6 +11,15 @@
     "preview": {
       "distribution": "internal"
     },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://kxxogajirafpgyapruer.supabase.co/",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4eG9nYWppcmFmcGd5YXBydWVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk2MjIwNTksImV4cCI6MjA0NTE5ODA1OX0.rETttMwR_LeLb9d7KRablKMPbdQSVa-oFZaziCcgttg"
+      }
+    }
+  },
+  "submit": {
     "production": {}
   }
 }
