@@ -1,4 +1,4 @@
-<img src="src-web-app/static/about/logo.png" alt="FSF Logo" width="75"/>
+<img src="src-web-app/static/FSF_Logo_Transparent.png" alt="TrekTrak Logo" width="75"/>
 
 # Faculty Staff Fitness
 
@@ -97,7 +97,7 @@ The mobile application is used by users to join events, track their steps, and c
 
 #### Why is Expo Go not working?
 
-- If you are having trouble, make sure your internet connection is set to private on your laptop and mobile device, make sure your network has device discovery enabled (For example, OSU secure does not work with Expo Go), make sure your firewall is not blocking the connection, and make sure your mobile device is on the same network as your laptop. If you are still having trouble, try using the tunnel option in the Expo Go app. If you are using a Mac and still having trouble, try using the ios emulator (Windows does not support ios emulators).
+- If you are having trouble, make sure your internet connection is set to private on your laptop and mobile device, make sure your network has device discovery enabled, make sure your firewall is not blocking the connection, and make sure your mobile device is on the same network as your laptop. If you are still having trouble, try using the tunnel option in the Expo Go app. If you are using a Mac and still having trouble, try using the ios emulator (Windows does not support ios emulators).
 
 #### How does the backend work?
 
