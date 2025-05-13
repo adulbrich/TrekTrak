@@ -11,6 +11,7 @@ import { fetchProfile } from '../store/profileSlice';
 import { syncMyActivity } from "../store/progressSlice";
 import { selectUserID } from "../store/systemSlice";
 import { useSelector } from 'react-redux';
+import { fetchMyTeams } from "../store/teamsSlice";
 import { fetchTeamLeaderboard } from "../store/teamLeaderboardSlice";
 
 export default function Index() {
@@ -30,6 +31,7 @@ export default function Index() {
     dispatch(fetchEvents());
     dispatch(fetchCurrentEvents(UserID));
     dispatch(fetchTeamLeaderboard(currentEvents));
+    dispatch(fetchMyTeams());
     dispatch(fetchTeamStats());
     dispatch(syncMyActivity());
   }, [dispatch]);
