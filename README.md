@@ -92,9 +92,17 @@ The web application is used by event organizers to create and manage events. Onc
 
 The web page should only be accessible by event facilitators within organizations, as they will first need to sign in using a provided login given by the developers. Event participants will only need the mobile platform to track their progress. 
 
+![Main Page](Webpage%20Screenshots/main.png)
+
+![Main Page](Webpage%20Screenshots/view_event.png)
+
 The main page displays all on-going events across all organizations, along with all past events and upcoming events. Each block contains the event title, description, date range, etc. Organizers can view each event's dedicated page with additional information and statistics. 
 
+![Main Page](Webpage%20Screenshots/make_event.png)
+
 Above, the main functionalities for the web page are accessible through buttons. Organizers are able to create events by clicking the green "Create Event" button, which brings them to a page where they can freely customize every element of their event. Here, they can set the reward system to be however they want for their participants, along with any achievements. Organizers need to also specify whether their event is defined by the amount of steps or distance taken by each participant.
+
+![Main Page](Webpage%20Screenshots/add_profile.png)
 
 To add users/participants to their events, click on the "Add Profile" button to navigate to the associated page. Here, organizers can create logins for their participants to use to sign in on the mobile platform. It's important to specify the organization they should be added to at the bottom, and avoid misspellings in each field. Users will be added to the database, and any progress they make will be tracked on the mobile app. Make sure to give each user the email and password entered for them. 
 
