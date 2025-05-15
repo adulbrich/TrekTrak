@@ -123,7 +123,20 @@ The mobile application is used by users to join events, track their steps, and c
 
 - No, the project is still in development and is not ready for production. Mostly all of the functionality is there, but there some features and design elements that need to be added.
 
+## Contact Information
+If you have any further questions, feel free to contact us via emails.
 
+Web Team(Organizers):
+Ali Akturin: akturial@oregonstate.edu
+Yoonseong Shin: shinyo@oregonstate.edu
+Yu-Siang Chou: chouyu@oregonstate.edu
+Zhi Liang: liangz2@oregonstate.edu
+
+Mobile Team(Participants):
+Vincent La: lavi@oregonstate.edu
+Vincent Le: levince@oregonstate.edu
+Bruce Yan: yanbr@oregonstate.edu
+Brayden Weigel: weigelb@oregonstate.edu
 
 ## References
 - [SvelteKit Documentation](https://kit.svelte.dev/docs/introduction)
