@@ -22,7 +22,7 @@ FSF (Faculty Staff Fitness) is an app where users join teams and compete against
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/OregonStateUniversity/osu-fsf.git
+    git clone https://github.com/adulbrich/TrekTrak.git
     ```
 
 2. Navigate to the web app directory:
