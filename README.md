@@ -42,9 +42,9 @@ FSF (Faculty Staff Fitness) is an app where users join teams and compete against
 
 #### Mobile Application
 
-1. Clone the repository
+1. Clone the repository (if not already done for the web app)
     ```bash
-    git clone https://github.com/OregonStateUniversity/osu-fsf.git
+    git clone https://github.com/adulbrich/TrekTrak.git
     ```
 
 2. Navigate to the mobile app directory:
@@ -57,7 +57,14 @@ FSF (Faculty Staff Fitness) is an app where users join teams and compete against
     npm install
     ```
 
-4. Start the Expo development server:
+4. Set up .env file
+    ```
+    # /src-mobile-app/.env
+    EXPO_PUBLIC_SUPABASE_URL="<supabase url>"
+    EXPO_PUBLIC_SUPABASE_ANON_KEY="<supabase anon key>"
+    ```
+
+5. Start the Expo development server:
     ```bash
     npm run start
     ```
