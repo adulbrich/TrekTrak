@@ -11,6 +11,8 @@ import { setActiveEvent } from "../../../store/eventsSlice";
 import { blue } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 import { widths } from "@tamagui/config";
 import { FlatList } from "react-native";
+import { useSelector } from "react-redux";
+import { fetchMyTeams, selectMyTeams } from "../../../store/teamsSlice";
 
 
 export default function EventDetails() {
@@ -20,6 +22,9 @@ export default function EventDetails() {
   const slugEventID = useLocalSearchParams().id;
   const event = useTypedSelector<SBEvent[]>(store => store.eventsSlice.events)
     .find(ev => ev.EventID === slugEventID);
+
+  const myTeams = useSelector(selectMyTeams);
+  const registered = myTeams.some((team) => team.BelongsToEventID == event?.EventID)
 
   var typeUnit = "";
   if (event?.Type == "Distance"){
@@ -147,7 +152,7 @@ export default function EventDetails() {
             {/* Rounded Register Button */}
             <YStack width={'100%'} alignItems="center" padding="$4">
               <Button
-                bg={'#81c746'}
+                bg={registered ? '#92bf6b' : '#81c746'}
                 color={'white'}
                 fontSize="$6"
                 height="$5"
@@ -159,8 +164,9 @@ export default function EventDetails() {
                 shadowOffset={{ width: 0, height: 2 }} // Shadow offset
                 shadowOpacity={0.3} // Shadow opacity
                 shadowRadius={4} // Shadow radius
+                disabled={registered}
               >
-                Register
+                {registered ? "Registered" : "Register"}
               </Button>
             </YStack>
           </YStack>

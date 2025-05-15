@@ -14,3 +14,7 @@ config = withTamagui(config, {
 });
 
 config.t
+
+config.resolver.unstable_enablePackageExports = false;
+
+module.exports = config

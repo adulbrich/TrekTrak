@@ -28,7 +28,6 @@ export const fetchTeamLeaderboard = createAsyncThunk(
             .in('BelongsToEventID', eventIDs ?? [])
 
         if (error) throw error
-        console.log("ALL TEAMS: ", data)
 
         return data
     }
@@ -41,7 +40,6 @@ const teamLeaderboardSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(fetchTeamLeaderboard.fulfilled, (state, action) => {
             state.teams = action.payload
-            console.log("EVENT TEAMS: ", state.teams)
 
         }),
         builder.addCase(fetchTeamLeaderboard.rejected, (state, action) => {
@@ -53,7 +51,7 @@ const teamLeaderboardSlice = createSlice({
 
 export default teamLeaderboardSlice.reducer
 const selectSelf = (state: RootState) => state.teamLeaderboardSlice;
-export const selectTeamLeaderboard = (state: RootState) => state.teamLeaderboardSlice.teams
+export const selectTeamLeaderboard = (state: RootState) => state.teamLeaderboardSlice.teams;
 const getEventID = (_: any, EventID: any) => EventID;
 
 //select all the teams from the user's event
@@ -62,6 +60,6 @@ export const selectEventTeams = createSelector(
     getEventID,
     (teams, eventID) => {
         console.log("Event ID:", eventID)
-        return teams.filter((team) => team.BelongsToEventID == eventID)
+        return teams.filter((team: SBTeam) => team.BelongsToEventID == eventID)
     }
 )
