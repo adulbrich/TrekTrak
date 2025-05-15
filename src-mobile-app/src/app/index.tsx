@@ -6,16 +6,19 @@ import { useEffect } from "react";
 import { fetchProfiles } from "../store/profilesSlice";
 import { fetchTeamStats, fetchTeamStatsBreakdown } from "../store/teamStatsSlice";
 import { fetchProfileStats } from "../store/profileStatsSlice";
-import { fetchEvents } from "../store/eventsSlice";
+import { fetchEvents, fetchCurrentEvents, selectMyEvents } from "../store/eventsSlice";
 import { fetchProfile } from '../store/profileSlice';
 import { syncMyActivity } from "../store/progressSlice";
 import { selectUserID } from "../store/systemSlice";
 import { useSelector } from 'react-redux';
+import { fetchMyTeams } from "../store/teamsSlice";
+import { fetchTeamLeaderboard } from "../store/teamLeaderboardSlice";
 
 export default function Index() {
   const { session, isReady, getSession } = useAuth();
   const dispatch = useTypedDispatch();
   const UserID = useSelector(selectUserID)
+  const currentEvents = useSelector(selectMyEvents)
 
   // We use this to key 
   const navigationState = useRootNavigationState();
@@ -26,6 +29,9 @@ export default function Index() {
     dispatch(fetchProfileStats());
     dispatch(fetchTeamStatsBreakdown());
     dispatch(fetchEvents());
+    dispatch(fetchCurrentEvents(UserID));
+    dispatch(fetchTeamLeaderboard(currentEvents));
+    dispatch(fetchMyTeams());
     dispatch(fetchTeamStats());
     dispatch(syncMyActivity());
   }, [dispatch]);

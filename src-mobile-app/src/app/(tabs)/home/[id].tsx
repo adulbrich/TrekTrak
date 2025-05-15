@@ -6,16 +6,20 @@ import { SBEvent, SBTeamStats } from "../../../lib/supabase-types";
 import { useAssets } from "expo-asset";
 import { getDateString } from "../../../lib/helpers";
 //import { useAuth } from "../../../lib/supabase";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { setActiveEvent } from "../../../store/eventsSlice";
 import { blue } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 import { widths } from "@tamagui/config";
 import { FlatList } from "react-native";
+import TeamLeaderboardCard from "../../../features/home/TeamLeaderboardCard";
+import IndividualLeaderboardCard from "../../../features/home/IndividualLeaderboardCard";
+import { useAuth } from "../../../features/system/Auth";
+import { supabase } from "../../../lib/supabase";
 import { useSelector } from "react-redux";
-import { fetchMyTeams, selectMyTeams } from "../../../store/teamsSlice";
+import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
 
 
-export default function EventDetails() {
+export default function HomeEventDetails() {
   const theme = useTheme();
   const dispatch = useTypedDispatch();
 
@@ -23,8 +27,11 @@ export default function EventDetails() {
   const event = useTypedSelector<SBEvent[]>(store => store.eventsSlice.events)
     .find(ev => ev.EventID === slugEventID);
 
-  const myTeams = useSelector(selectMyTeams);
-  const registered = myTeams.some((team) => team.BelongsToEventID == event?.EventID)
+    //get teams in event
+   const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
+   console.log("Teams: ", teamsList)
+
+  
 
   var typeUnit = "";
   if (event?.Type == "Distance"){
@@ -33,13 +40,6 @@ export default function EventDetails() {
     typeUnit = "steps";
   }
 
-  //const { user, session } = useAuth();
-
-  const teamStats = useTypedSelector<SBTeamStats[]>(store => store.teamStatsSlice.teamStats)
-    .filter(ts => ts.BelongsToEventID === slugEventID)
-    .sort((a, b) => (b.TotalScore ?? 0) - (a.TotalScore ?? 0));
-
-  console.log(teamStats);
 
   const [assets] = useAssets([
 
@@ -49,11 +49,6 @@ export default function EventDetails() {
 
   ]);
 
-  const registerCallback = React.useCallback(() => {
-    dispatch(setActiveEvent(event));
-    console.log('Register button pressed!')
-  }, [event]);
-
 
   if (!event || !assets) return null;
 
@@ -61,10 +56,10 @@ export default function EventDetails() {
     <>
       <Stack.Screen
         options={{
-          headerTintColor: "#FFFFFF",
+          headerTintColor: "#000000",
           title: event.Name,
           headerShown: true,
-          headerBackTitle: 'Events',
+          headerBackTitle: 'Home',
           headerStyle: {
             backgroundColor: theme.background.get()
           },
@@ -90,7 +85,7 @@ export default function EventDetails() {
               />
           </YStack>
 
-          {/* Event box for dates, description, and register button */}
+          {/* Event box for dates, description*/}
           <YStack 
             width={'100%'} 
             padding="$4" 
@@ -131,69 +126,15 @@ export default function EventDetails() {
                 </YStack>
               </YStack>
 
-              <Text color='black' fontSize="$7" paddingVertical="$1">
-                Reward Tiers:
-              </Text>
-
-              <View>
-                {event.Achievements.map((tier, index) => (
-                  <View key={index}>
-                    <Text color="black" fontSize="$5">
-                      {index + 1}: {tier} {typeUnit}
-                    </Text>
-                  </View>
-                ))
-                }
-              </View>
-
             </YStack>
 
-
-            {/* Rounded Register Button */}
-            <YStack width={'100%'} alignItems="center" padding="$4">
-              <Button
-                bg={registered ? '#92bf6b' : '#81c746'}
-                color={'white'}
-                fontSize="$6"
-                height="$5"
-                width="$14"
-                onPress={registerCallback}
-                borderRadius="$4"
-                pressStyle={{ opacity: 1 }} // Optional: Adjust opacity on press
-                shadowColor={'#000'} // Shadow color
-                shadowOffset={{ width: 0, height: 2 }} // Shadow offset
-                shadowOpacity={0.3} // Shadow opacity
-                shadowRadius={4} // Shadow radius
-                disabled={registered}
-              >
-                {registered ? "Registered" : "Register"}
-              </Button>
-            </YStack>
           </YStack>
 
+          <Text>Team Leaderboard</Text>
+          <TeamLeaderboardCard teamList={teamsList}/>
 
-          <YStack gap={'$4'} 
-            borderWidth={1} 
-            padding="$4"
-            borderRadius="$4"
-            borderColor="#898A8D"
-            >
-            <H3 color="black">Top 5 Teams</H3>
-            { teamStats.length === 0 && (
-              <XStack width={'100%'} justifyContent="center">
-                <Text>No stats available</Text>
-              </XStack>
-            )}
-            { teamStats.slice(0, 5).map(ts =>
-              <XStack key={ts.TeamID} width={'100%'} justifyContent="space-between" alignItems="flex-end">
-                <Text color="black">{ ts.Name }</Text>
-                <RN_Text ellipsizeMode="clip" numberOfLines={1} style={[{ flex: 1, marginHorizontal: 1 }]}>
-                  ............................................................
-                </RN_Text>
-                <Text color="black">{ ts.TotalScore ?? 0 }</Text>
-              </XStack>
-            )}
-          </YStack>
+          <Text>Individual Leaderboard</Text>
+          <IndividualLeaderboardCard />
           
 
         </YStack>
