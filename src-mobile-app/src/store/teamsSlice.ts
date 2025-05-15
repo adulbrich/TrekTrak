@@ -35,15 +35,29 @@ export const fetchMyTeams = createAsyncThunk<
   if (!userID) return rejectWithValue('User ID not found');
 
   const { data, error } = await supabase
-    .from('Teams')
-    .select(`
-      *,
-      Profiles(ProfileID)
-    `)
+    .from("TeamsProfiles")
+    .select(`TeamID, 
+         Teams(
+            BelongsToEventID,
+            CreatedAt,
+            Name,
+            UpdatedAt,
+            RewardCount
+        )`)
     .eq('ProfileID', userID);
 
   if (error) return rejectWithValue(error.message);
-  return data ?? [];
+
+  const newData = data.map((team) => ({
+    BelongsToEventID: team.Teams.BelongsToEventID,
+    CreatedAt: team.Teams.CreatedAt,
+    Name: team.Teams.Name,
+    TeamID: team.TeamID,
+    UpdatedAt: team.Teams.UpdatedAt,
+    RewardCount: team.Teams.RewardCount
+  }))
+
+  return newData ?? [];
 });
 
 export const createTeam = createAsyncThunk<
@@ -55,7 +69,8 @@ export const createTeam = createAsyncThunk<
     .from('Teams')
     .insert({
       Name: name,
-      BelongsToEventID: eventID
+      BelongsToEventID: eventID,
+      RewardCount: 0
     })
     .select()
     .single();
