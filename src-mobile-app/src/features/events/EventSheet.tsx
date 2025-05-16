@@ -88,10 +88,6 @@ export default function EventDetailsSheet( {team} : Props) {
     dispatch(createTeam({ name: teamName, eventID: activeEvent.EventID }))
       .then((resultAction) => {
         if (createTeam.fulfilled.match(resultAction)) {
-          //add user to team they created
-          // const teamID = resultAction.payload.TeamID;
-          // const myProfile = useSelector(selectProfile);
-          // dispatch(joinTeam({profileID: myProfile.ProfileID, teamID: teamID}))
 
 
           // Team creation succeeded

@@ -1,4 +1,4 @@
-<img src="src-web-app/static/about/logo.png" alt="FSF Logo" width="75"/>
+<img src="src-web-app/static/FSF_Logo_Transparent.png" alt="TrekTrak Logo" width="75"/>
 
 # Faculty Staff Fitness
 
@@ -22,7 +22,7 @@ FSF (Faculty Staff Fitness) is an app where users join teams and compete against
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/OregonStateUniversity/osu-fsf.git
+    git clone https://github.com/adulbrich/TrekTrak.git
     ```
 
 2. Navigate to the web app directory:
@@ -90,6 +90,22 @@ Everything you need to know about the project is in the Starlight documentation.
 ### Web Application
 The web application is used by event organizers to create and manage events. Once the server is running, navigate to the provided URL to access the application.
 
+The web page should only be accessible by event facilitators within organizations, as they will first need to sign in using a provided login given by the developers. Event participants will only need the mobile platform to track their progress. 
+
+![Main Page](Webpage%20Screenshots/main.png)
+
+![Main Page](Webpage%20Screenshots/view_event.png)
+
+The main page displays all on-going events across all organizations, along with all past events and upcoming events. Each block contains the event title, description, date range, etc. Organizers can view each event's dedicated page with additional information and statistics. 
+
+![Main Page](Webpage%20Screenshots/make_event.png)
+
+Above, the main functionalities for the web page are accessible through buttons. Organizers are able to create events by clicking the green "Create Event" button, which brings them to a page where they can freely customize every element of their event. Here, they can set the reward system to be however they want for their participants, along with any achievements. Organizers need to also specify whether their event is defined by the amount of steps or distance taken by each participant.
+
+![Main Page](Webpage%20Screenshots/add_profile.png)
+
+To add users/participants to their events, click on the "Add Profile" button to navigate to the associated page. Here, organizers can create logins for their participants to use to sign in on the mobile platform. It's important to specify the organization they should be added to at the bottom, and avoid misspellings in each field. Users will be added to the database, and any progress they make will be tracked on the mobile app. Make sure to give each user the email and password entered for them. 
+
 ### Mobile Application
 The mobile application is used by users to join events, track their steps, and compete with other teams. After starting the Expo server, use the Expo Go app on your mobile device to scan the QR code and interact with the application.
 
@@ -97,7 +113,7 @@ The mobile application is used by users to join events, track their steps, and c
 
 #### Why is Expo Go not working?
 
-- If you are having trouble, make sure your internet connection is set to private on your laptop and mobile device, make sure your network has device discovery enabled (For example, OSU secure does not work with Expo Go), make sure your firewall is not blocking the connection, and make sure your mobile device is on the same network as your laptop. If you are still having trouble, try using the tunnel option in the Expo Go app. If you are using a Mac and still having trouble, try using the ios emulator (Windows does not support ios emulators).
+- If you are having trouble, make sure your internet connection is set to private on your laptop and mobile device, make sure your network has device discovery enabled, make sure your firewall is not blocking the connection, and make sure your mobile device is on the same network as your laptop. If you are still having trouble, try using the tunnel option in the Expo Go app. If you are using a Mac and still having trouble, try using the ios emulator (Windows does not support ios emulators).
 
 #### How does the backend work?
 
@@ -123,7 +139,20 @@ The mobile application is used by users to join events, track their steps, and c
 
 - No, the project is still in development and is not ready for production. Mostly all of the functionality is there, but there some features and design elements that need to be added.
 
+## Contact Information
+If you have any further questions, feel free to contact us via emails.
 
+Web Team(Organizers):
+Ali Akturin: akturial@oregonstate.edu
+Yoonseong Shin: shinyo@oregonstate.edu
+Yu-Siang Chou: chouyu@oregonstate.edu
+Zhi Liang: liangz2@oregonstate.edu
+
+Mobile Team(Participants):
+Vincent La: lavi@oregonstate.edu
+Vincent Le: levince@oregonstate.edu
+Bruce Yan: yanbr@oregonstate.edu
+Brayden Weigel: weigelb@oregonstate.edu
 
 ## References
 - [SvelteKit Documentation](https://kit.svelte.dev/docs/introduction)
