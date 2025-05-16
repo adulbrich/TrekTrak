@@ -29,6 +29,16 @@
         <div class="blackLine"></div>
       {/if}
     </a>
+    <a href="/events/id/{data.Event?.EventID}/Stats" class:navBarSelected={$page.url.pathname=== `/events/id/${data.Event?.EventID}/Stats`} class="navBarLabel ml-9 nav">Stats
+      {#if $page.url.pathname === `/events/${data.Event?.EventID}/Stats`}
+        <div class="blackLine"></div>
+      {/if}
+    </a>
+    <a href="/events/id/{data.Event?.EventID}/Participants" class:navBarSelected={$page.url.pathname=== `/events/id/${data.Event?.EventID}/Participants`} class="navBarLabel ml-9 nav">Participants
+      {#if $page.url.pathname === `/events/${data.Event?.EventID}/Participants`}
+        <div class="blackLine"></div>
+      {/if}
+    </a>
   </div>
 </div>
 <slot />
