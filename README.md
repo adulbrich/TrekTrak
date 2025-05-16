@@ -66,7 +66,8 @@ FSF (Faculty Staff Fitness) is an app where users join teams and compete against
 5. Set up mobile emulator
     Android 
         a. Open Android Studio
-
+        b. Go to Virtual Device Manager
+        c. Select Run or Create virtual device
 
     iOS (Mac only)
         a. Open Xcode simulator
