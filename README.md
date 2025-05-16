@@ -63,8 +63,16 @@ FSF (Faculty Staff Fitness) is an app where users join teams and compete against
     EXPO_PUBLIC_SUPABASE_URL="<supabase url>"
     EXPO_PUBLIC_SUPABASE_ANON_KEY="<supabase anon key>"
     ```
+5. Set up mobile emulator
+    Android 
+        a. Open Android Studio
 
-5. Start the Expo development server:
+
+    iOS (Mac only)
+        a. Open Xcode simulator
+
+
+6. Start the Expo development server:
     ```bash
     npm run start
     ```
