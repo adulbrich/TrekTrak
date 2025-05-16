@@ -1,9 +1,9 @@
 <img src="src-web-app/static/FSF_Logo_Transparent.png" alt="TrekTrak Logo" width="75"/>
 
-# Faculty Staff Fitness
+# TrekTrak
 
 ## Description
-FSF (Faculty Staff Fitness) is an app where users join teams and compete against other teams based on the number of steps they take. It is event-based with one event held each month. The project consists of two parts: a web application for event organizers and a mobile application for users.  We are also using Starlight for the documentation of the project.
+The TrekTrak project was created to better fit the needs of fitness event organizers in managing large scale events such as walkathons. TrekTrak is split up into two applications consisting of our facilitator web app and our event participant mobile app. Facilitators can create and track events while our mobile app allows users to participate in events and track their progress. TrekTrak is currently in the progress of beta testing and currently running step based events. 
 
 ## Table of Contents
 - [Installation](#installation)
