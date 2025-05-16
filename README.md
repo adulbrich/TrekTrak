@@ -92,22 +92,65 @@ The web application is used by event organizers to create and manage events. Onc
 
 The web page should only be accessible by event facilitators within organizations, as they will first need to sign in using a provided login given by the developers. Event participants will only need the mobile platform to track their progress. 
 
-![Main Page](Webpage%20Screenshots/main.png)
+![Main Page](readme_assets/Webpage%20Screenshots/main.png)
 
-![Main Page](Webpage%20Screenshots/view_event.png)
+![Main Page](readme_assets/Webpage%20Screenshots/view_event.png)
 
 The main page displays all on-going events across all organizations, along with all past events and upcoming events. Each block contains the event title, description, date range, etc. Organizers can view each event's dedicated page with additional information and statistics. 
 
-![Main Page](Webpage%20Screenshots/make_event.png)
+![Main Page](readme_assets/Webpage%20Screenshots/make_event.png)
 
 Above, the main functionalities for the web page are accessible through buttons. Organizers are able to create events by clicking the green "Create Event" button, which brings them to a page where they can freely customize every element of their event. Here, they can set the reward system to be however they want for their participants, along with any achievements. Organizers need to also specify whether their event is defined by the amount of steps or distance taken by each participant.
 
-![Main Page](Webpage%20Screenshots/add_profile.png)
+![Main Page](readme_assets/Webpage%20Screenshots/add_profile.png)
 
 To add users/participants to their events, click on the "Add Profile" button to navigate to the associated page. Here, organizers can create logins for their participants to use to sign in on the mobile platform. It's important to specify the organization they should be added to at the bottom, and avoid misspellings in each field. Users will be added to the database, and any progress they make will be tracked on the mobile app. Make sure to give each user the email and password entered for them. 
 
 ### Mobile Application
-The mobile application is used by users to join events, track their steps, and compete with other teams. After starting the Expo server, use the Expo Go app on your mobile device to scan the QR code and interact with the application.
+
+The mobile application allows users to join events, track their steps, and compete with other teams. After starting the Expo development server, use the **Expo Go** app on your mobile device to scan the provided QR code and launch the application.
+
+For beta testing or public distribution, the app can be published to the Apple App Store and Google Play Store. Developers may need to submit the app for review and then send download links to users via email.
+
+---
+
+### Login / Signup Page
+
+The login page allows users to sign in to their accounts. Only users who are **pre-registered** in Supabase (our backend database) can log in. Self-registration through the app is **not supported**. Instead, event administrators must provide developers with a list of approved users to create accounts manually.
+
+![Login Page](readme_assets/mobile_screenshots/login.png) 
+
+---
+
+### Events
+
+The **Events** page is currently the landing page after login. It lists all current and upcoming events that a user is eligible to join. Users can view event details, join available events, and manage their team memberships for each event.
+![Events Page](readme_assets/mobile_screenshots/events.png) 
+
+---
+
+### Home Page
+
+The **Home** page gives users an overview of their current events, recent progress, and a snapshot of leaderboard statistics. It combines information from both the individual and team leaderboard pages, making it a useful summary screen for personal performance tracking.
+![Home Page](readme_assets/mobile_screenshots/home.png)
+
+---
+
+### Individual Page
+
+The **Individual** page displays personal information including the user's name and email. It also shows the individual leaderboard, where users can see how their step count ranks against other participants.
+![Individual Page](readme_assets/mobile_screenshots/Individual_start.png)
+![Individual Edit](readme_assets/mobile_screenshots/Individual_edit.png)
+![Individual Leaderboard](readme_assets/mobile_screenshots/Individual_leaderboard.png)
+
+---
+
+### Team Leaderboard
+
+The **Team Leaderboard** page shows all teams that the user is a part of, along with each team’s ranking based on total steps. It helps users track their team’s progress and competitive standing throughout the event.
+![Individual Steps](readme_assets/mobile_screenshots/team_steps.png)
+![Team Leaderboard](readme_assets/mobile_screenshots/team_leaderboard.png)
+
 
 ## FAQ
 

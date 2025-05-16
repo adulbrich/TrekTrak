@@ -43,7 +43,7 @@ This folder contains the components and logic for specific features or screens o
 - Subfolders like `home` and `events` hold full screen layouts, despite not being in the `app` folder.
 - If you’re adding a new feature and need state management, create a slice in the `store` folder.
 
-For Redux usage and creating slices, refer to the documentation linked in the main README.
+For Redux usage and creating slices, refer to the documentation linked above.
 
 ---
 
@@ -88,11 +88,6 @@ With **Expo Router**, routing is file-based (like Next.js).
 - Navigation is declarative using `<Link />` and `<Redirect />`.
   
 This differs from traditional React Native apps, which use `react-navigation` and manually configure routes and stacks in JavaScript.
-
-### Trade-offs
-
-- Some custom native modules aren’t available unless you **eject** to the bare workflow.
-- Native debugging can be harder if you're unfamiliar with Expo’s abstractions.
 
 ### Summary
 
