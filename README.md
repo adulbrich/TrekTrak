@@ -42,9 +42,9 @@ The TrekTrak project was created to better fit the needs of fitness event organi
 
 #### Mobile Application
 
-1. Clone the repository
+1. Clone the repository (if not already done for the web app)
     ```bash
-    git clone https://github.com/OregonStateUniversity/osu-fsf.git
+    git clone https://github.com/adulbrich/TrekTrak.git
     ```
 
 2. Navigate to the mobile app directory:
@@ -57,7 +57,23 @@ The TrekTrak project was created to better fit the needs of fitness event organi
     npm install
     ```
 
-4. Start the Expo development server:
+4. Set up .env file
+    ```
+    # /src-mobile-app/.env
+    EXPO_PUBLIC_SUPABASE_URL="<supabase url>"
+    EXPO_PUBLIC_SUPABASE_ANON_KEY="<supabase anon key>"
+    ```
+5. Set up mobile emulator
+    Android 
+        a. Open Android Studio
+        b. Go to Virtual Device Manager
+        c. Select Run or Create virtual device
+
+    iOS (Mac only)
+        a. Open Xcode simulator
+
+
+6. Start the Expo development server:
     ```bash
     npm run start
     ```
