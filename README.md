@@ -134,39 +134,48 @@ For beta testing or public distribution, the app can be published to the Apple A
 
 The login page allows users to sign in to their accounts. Only users who are **pre-registered** in Supabase (our backend database) can log in. Self-registration through the app is **not supported**. Instead, event administrators must provide developers with a list of approved users to create accounts manually.
 
-![Login Page](readme_assets/mobile_screenshots/login.png) 
+<div style="display: flex; gap: 10px;">
+    <img src="readme_assets/mobile_screenshots/login.png" alt="Login Page" style="width: 30%;" >
+</div>
 
 ---
 
 ### Events
 
 The **Events** page is currently the landing page after login. It lists all current and upcoming events that a user is eligible to join. Users can view event details, join available events, and manage their team memberships for each event.
-![Events Page](readme_assets/mobile_screenshots/events.png) 
+<div style="display: flex; gap: 10px;">
+    <img src="readme_assets/mobile_screenshots/events.png" alt="Events Page" style="width: 30%;">
+</div>
 
 ---
 
 ### Home Page
 
 The **Home** page gives users an overview of their current events, recent progress, and a snapshot of leaderboard statistics. It combines information from both the individual and team leaderboard pages, making it a useful summary screen for personal performance tracking.
-![Home Page](readme_assets/mobile_screenshots/home.png)
+<div style="display: flex; gap: 10px;">
+    <img src="readme_assets/mobile_screenshots/home.png" alt="Home Page" style="width: 30%;">
+</div>
 
 ---
 
 ### Individual Page
 
 The **Individual** page displays personal information including the user's name and email. It also shows the individual leaderboard, where users can see how their step count ranks against other participants.
-![Individual Page](readme_assets/mobile_screenshots/Individual_start.png)
-![Individual Edit](readme_assets/mobile_screenshots/Individual_edit.png)
-![Individual Leaderboard](readme_assets/mobile_screenshots/Individual_leaderboard.png)
 
+<div style="display: flex; gap: 10px;">
+  <img src="readme_assets/mobile_screenshots/Individual_start.png" alt="Individual Page" style="width: 30%;">
+  <img src="readme_assets/mobile_screenshots/Individual_edit.png" alt="Individual Edit" style="width: 30%;">
+  <img src="readme_assets/mobile_screenshots/Individual_leaderboard.png" alt="Individual Leaderboard" style="width: 30%;">
+</div>
 ---
 
 ### Team Leaderboard
 
 The **Team Leaderboard** page shows all teams that the user is a part of, along with each team’s ranking based on total steps. It helps users track their team’s progress and competitive standing throughout the event.
-![Individual Steps](readme_assets/mobile_screenshots/team_steps.png)
-![Team Leaderboard](readme_assets/mobile_screenshots/team_leaderboard.png)
-
+<div style="display: flex; gap: 10px;">
+  <img src="readme_assets/mobile_screenshots/team_steps.png" alt="Steps" style="width: 30%;">
+  <img src="readme_assets/mobile_screenshots/team_leaderboard.png" alt="Team Leaderboard" style="width: 30%;">
+</div>
 
 ## FAQ
 
