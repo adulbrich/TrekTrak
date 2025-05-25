@@ -42,7 +42,7 @@ export default function EventCard({ event }: Props) {
 
 
   //calculate daily progress
-  const progress = 5000 //temp value
+  const progress = 7000 //temp value
 
   const currentDate = new Date()
   useEffect(() => {
