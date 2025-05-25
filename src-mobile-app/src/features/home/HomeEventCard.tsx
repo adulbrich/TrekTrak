@@ -10,9 +10,10 @@ import { useSelector } from "react-redux";
 import { selectEventTeams } from "../../store/teamLeaderboardSlice";
 import { selectMyTeams } from "../../store/teamsSlice";
 import { useTypedDispatch } from "../../store/store";
-import { fetchEventUsers, selectIndividualLeaderboard } from "../../store/individualLeaderboardSlice";
+import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "../../store/individualLeaderboardSlice";
 import { selectUserID } from "../../store/systemSlice";
 import { fetchTodaysProgress, insertTodaysProgress, selectTodaysProgress, updateTodaysProgress } from "../../store/activityProgressSlice";
+import eventsSlice from "../../store/eventsSlice";
 
 type Props = {
   event: Tables<'Events'>
@@ -30,10 +31,6 @@ export default function EventCard({ event }: Props) {
   const [useFallback, setUseFallback] = useState(false);
   const dispatch = useTypedDispatch();
 
-  useEffect(() => {
-    dispatch(fetchEventUsers(event.EventID))
-  }, [dispatch]);
-
   const pressCallback = React.useCallback(() => {
     router.push(`/home/${event.EventID}`);
   }, [event]);
@@ -42,15 +39,7 @@ export default function EventCard({ event }: Props) {
   const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
   const myTeams = useSelector(selectMyTeams);
   const myTeam = myTeams.find((team) => team.BelongsToEventID == event.EventID)
-  teamsList.sort((a, b) => b.RewardCount - a.RewardCount)
-  const myTeamPlace = teamsList.findIndex((team) => team.TeamID == myTeam?.TeamID)
 
-  //calculate individual position
-  const usersList = useSelector(selectIndividualLeaderboard)
-  const UserID = useSelector(selectUserID)
-  const myUser = usersList.find((user) => user.ProfileID == UserID)
-  usersList.sort((a, b) => b.RewardCount - a.RewardCount)
-  const myUserPlace = usersList.findIndex((user) => user.ProfileID == UserID)
 
   //calculate daily progress
   const progress = 5000 //temp value
@@ -63,25 +52,55 @@ export default function EventCard({ event }: Props) {
   const activityProgressList = useSelector(selectTodaysProgress)
   const activityProgress = activityProgressList.find((team) => team.BelongsToTeamID == myTeam?.TeamID)
 
-  // if (activityProgress != undefined){//record already exists, so we will update it, but only if the new progress is different
-  //   if (activityProgress.RawProgress == progress){
-  //     console.log("PROGRESS MATCHES, SO DON'T INSERT OR UPDATE!!")
+  useEffect(() => {
+    if (activityProgress && activityProgress != undefined){//if a record exists for today
+      if (activityProgress.RawProgress == progress){//new progress matches current progress, so don't update
+        //DO NOTHING
+        console.log("DOING NOTHING")
+  
+      } else { //not equal, so update todays record
+          dispatch(updateTodaysProgress({activityProgressID: activityProgress.ActivityProgressID, progress: progress}))
+          dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
+        console.log("UPDATING ACTIVITY PROGRESS")
+  
+      }
+  
+    } else {//no record exists for today, so insert a new one
+      if (UserID && myTeam){
+        dispatch(insertTodaysProgress({userID: UserID, teamID: myTeam?.TeamID, type: event.Type, progress: progress}))
+        dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
+      }
+      console.log("INSERTING ACTIVITY PROGRESS")
+    }
+  }, [dispatch]);
 
-  //   } else {
-  //     useEffect(() => {
-  //       dispatch(updateTodaysProgress({activityProgressID: activityProgress.ActivityProgressID, progress: progress}))
-  //     }, [dispatch]);
-  //     console.log("UPDATING ACTIVITY PROGRESS")
+  //new activity Progress
+  const newAPList = useSelector(selectTodaysProgress)
+  const newAP = newAPList.find((team) => team.BelongsToTeamID == myTeam?.TeamID)
 
-  //   }
+  //calculate todays rewards
+  let rewards = 0
+  if (newAP){
+    for (let i = 0; i < event.AchievementCount; i++){
+      if (newAP.RawProgress >= Number(event.Achievements[i])){
+        rewards++
+      }
+    }
+  }
 
-  // } else {//record does not exist for today, so we will insert one
-  //   useEffect(() => {
-  //     dispatch(insertTodaysProgress({userID: UserID, teamID: myTeam?.TeamID, type: event.Type, progress: progress}))
-  //   }, [dispatch]);
-  //   console.log("INSERTING ACTIVITY PROGRESS")
+  //calculate team position after updated
+  const newteamsList = useSelector(state => selectEventTeams(state, event?.EventID))
+  const newMyTeams = useSelector(selectMyTeams);
+  const newMyTeam = myTeams.find((team) => team.BelongsToEventID == event.EventID)
+  teamsList.sort((a, b) => b.RewardCount - a.RewardCount)
+  const myTeamPlace = teamsList.findIndex((team) => team.TeamID == myTeam?.TeamID)
 
-  // }
+  //calculate individual position
+  const usersList = useSelector(state => selectEventUsers(state, event?.EventID))
+  const UserID = useSelector(selectUserID)
+  const myUser = usersList.find((user) => user.ProfileID == UserID)
+  usersList.sort((a, b) => b.RewardCount - a.RewardCount)
+  const myUserPlace = usersList.findIndex((user) => user.ProfileID == UserID)
 
   
 
@@ -143,7 +162,7 @@ export default function EventCard({ event }: Props) {
             <YStack>
                 <H3 color="black">{event.Name}</H3>
                 <H5 color="black">My Team: {myTeam?.Name}</H5>
-                <H5 color="black">Daily Progress: {progress} {typeUnit}</H5>
+                <H5 color="black">Daily Progress: {newAP?.RawProgress} {typeUnit}    🍃 {rewards}</H5>
                 <H5 color="black">Team Place: {myTeamPlace + 1}/{teamsList.length}     🍃 {myTeam?.RewardCount} {event.RewardPlural}</H5>
                 <H5 color="black">Individual Place: {myUserPlace + 1}/{usersList.length}     🍃 {myUser?.RewardCount} {event.RewardPlural}</H5>
                 {/* Fake Data, will be replaced later*/}

@@ -13,12 +13,15 @@ import { selectUserID } from "../store/systemSlice";
 import { useSelector } from 'react-redux';
 import { fetchMyTeams } from "../store/teamsSlice";
 import { fetchTeamLeaderboard } from "../store/teamLeaderboardSlice";
+import { fetchEventUsers } from "../store/individualLeaderboardSlice";
+import { fetchTodaysProgress } from "../store/activityProgressSlice";
 
 export default function Index() {
   const { session, isReady, getSession } = useAuth();
   const dispatch = useTypedDispatch();
   const UserID = useSelector(selectUserID)
   const currentEvents = useSelector(selectMyEvents)
+  const currentDate = new Date()
 
   // We use this to key 
   const navigationState = useRootNavigationState();
@@ -31,6 +34,8 @@ export default function Index() {
     dispatch(fetchEvents());
     dispatch(fetchCurrentEvents(UserID));
     dispatch(fetchTeamLeaderboard(currentEvents));
+    dispatch(fetchEventUsers(currentEvents));
+    dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
     dispatch(fetchMyTeams());
     dispatch(fetchTeamStats());
     dispatch(syncMyActivity());

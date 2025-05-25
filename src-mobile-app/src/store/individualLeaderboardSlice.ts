@@ -2,7 +2,7 @@ import { createAsyncThunk, createSelector, createSlice, current } from '@reduxjs
 import { useSelector } from "react-redux";
 import { supabase } from '../lib/supabase';
 import { RootState } from './store';
-import { SBProfile, SBTeamsProfiles } from '../lib/models';
+import { SBEvent, SBProfile, SBTeamsProfiles } from '../lib/models';
 import { selectMyEvents } from './eventsSlice';
 import teamsSlice from './teamsSlice';
 
@@ -26,7 +26,10 @@ const initialState: IndividualLeaderboardState = {
 
 export const fetchEventUsers = createAsyncThunk(
     'individualLeaderboard/fetchEventUsers',
-    async (eventID: string | null, thunkAPI) => { 
+    async (currentEvents: SBEvent[] | null, thunkAPI) => { 
+
+        //get array of event IDs
+        const eventIDs = currentEvents?.map(item => item.EventID)
 
         //get all users stats for the given event
         const { data, error } = await supabase
@@ -40,7 +43,7 @@ export const fetchEventUsers = createAsyncThunk(
                     Profiles(
                     Name
                     )`)
-            .eq('Teams.BelongsToEventID', eventID ?? "")
+            .in('Teams.BelongsToEventID', eventIDs ?? [])
             
 
         if (error) throw error
@@ -67,3 +70,15 @@ const individualLeaderboardSlice = createSlice({
 
 export default individualLeaderboardSlice.reducer
 export const selectIndividualLeaderboard = (state: RootState) => state.individualLeaderboardSlice.profiles;
+
+const getEventID = (_: any, EventID: any) => EventID;
+
+//select all the teams from the user's event
+export const selectEventUsers = createSelector(
+    selectIndividualLeaderboard,
+    getEventID,
+    (users, eventID) => {
+        console.log("Event ID:", eventID)
+        return users.filter((user) => user.Teams.BelongsToEventID == eventID)
+    }
+)

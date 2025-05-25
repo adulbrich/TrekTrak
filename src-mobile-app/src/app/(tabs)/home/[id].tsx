@@ -17,7 +17,7 @@ import { useAuth } from "../../../features/system/Auth";
 import { supabase } from "../../../lib/supabase";
 import { useSelector } from "react-redux";
 import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
-import { fetchEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
+import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
 
 
 export default function HomeEventDetails() {
@@ -33,11 +33,7 @@ export default function HomeEventDetails() {
   //get teams in event
   const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
 
-  //get users in event
-  useEffect(() => {
-    dispatch(fetchEventUsers(event.EventID ?? ""))
-  }, [dispatch]);
-  const usersList = useSelector(selectIndividualLeaderboard)
+  const usersList = useSelector(state => selectEventUsers(state, event?.EventID))
   
 
   var typeUnit = "";

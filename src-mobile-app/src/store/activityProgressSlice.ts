@@ -40,7 +40,7 @@ export const fetchTodaysProgress = createAsyncThunk(
 
 export const insertTodaysProgress = createAsyncThunk(
     'activityProgress/insertTodaysProgress',
-    async (props: {userID: string | null, teamID: string | undefined, type: string, progress: number}, thunkAPI) => { 
+    async (props: {userID: string, teamID: string, type: string, progress: number}, thunkAPI) => { 
         if (!props.userID) return
         if (!props.teamID) return
 

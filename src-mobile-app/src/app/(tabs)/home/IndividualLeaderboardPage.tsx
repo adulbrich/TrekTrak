@@ -8,7 +8,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { useSelector } from "react-redux";
 import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
 import { useTypedDispatch } from "../../../store/store";
-import { fetchEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
+import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
 
 export default function TeamLeaderboardPage() {
     const theme = useTheme();
@@ -16,10 +16,7 @@ export default function TeamLeaderboardPage() {
     const eventID = useLocalSearchParams().eventID
     
     //get users in event
-    useEffect(() => {
-        dispatch(fetchEventUsers(Array.isArray(eventID) ? (eventID[0] ?? "") : (eventID ?? "")))
-    }, [dispatch]);
-    const usersList = useSelector(selectIndividualLeaderboard)
+    const usersList = useSelector(state => selectEventUsers(state, eventID))
   
     return (
     <>
