@@ -49,5 +49,5 @@ export default function Index() {
   if (!session)
     return <Redirect href={'/(auth)/sign-in'} />;
   else
-    return <Redirect href={'/(tabs)/events/events-list'} />;
+    return <Redirect href={'/(tabs)/home/home-page'} />;
 }

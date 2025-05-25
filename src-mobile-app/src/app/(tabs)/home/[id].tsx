@@ -17,6 +17,7 @@ import { useAuth } from "../../../features/system/Auth";
 import { supabase } from "../../../lib/supabase";
 import { useSelector } from "react-redux";
 import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
+import { fetchEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
 
 
 export default function HomeEventDetails() {
@@ -27,10 +28,16 @@ export default function HomeEventDetails() {
   const event = useTypedSelector<SBEvent[]>(store => store.eventsSlice.events)
     .find(ev => ev.EventID === slugEventID);
 
-    //get teams in event
-   const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
-   console.log("Teams: ", teamsList)
+  if (event == undefined) return null
 
+  //get teams in event
+  const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
+
+  //get users in event
+  useEffect(() => {
+    dispatch(fetchEventUsers(event.EventID ?? ""))
+  }, [dispatch]);
+  const usersList = useSelector(selectIndividualLeaderboard)
   
 
   var typeUnit = "";
@@ -130,12 +137,9 @@ export default function HomeEventDetails() {
 
           </YStack>
 
-          <Text>Team Leaderboard</Text>
           <TeamLeaderboardCard teamList={teamsList}/>
 
-          <Text>Individual Leaderboard</Text>
-          <IndividualLeaderboardCard />
-          
+          <IndividualLeaderboardCard usersList={usersList}/>
 
         </YStack>
       </ScrollView>

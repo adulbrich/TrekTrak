@@ -1,4 +1,4 @@
-import { AnimatePresence, Card, H3, H5, Image, Text, XStack, YStack } from "tamagui";
+import { AnimatePresence, Card, H3, H4, H5, Image, Text, XStack, YStack } from "tamagui";
 import { Tables } from "../../lib/supabase-types";
 import { useAssets } from "expo-asset";
 import { LinearGradient } from 'tamagui/linear-gradient'
@@ -6,6 +6,13 @@ import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../system/Auth";
+import { useSelector } from "react-redux";
+import { selectEventTeams } from "../../store/teamLeaderboardSlice";
+import { selectMyTeams } from "../../store/teamsSlice";
+import { useTypedDispatch } from "../../store/store";
+import { fetchEventUsers, selectIndividualLeaderboard } from "../../store/individualLeaderboardSlice";
+import { selectUserID } from "../../store/systemSlice";
+import { fetchTodaysProgress, insertTodaysProgress, selectTodaysProgress, updateTodaysProgress } from "../../store/activityProgressSlice";
 
 type Props = {
   event: Tables<'Events'>
@@ -19,13 +26,73 @@ export default function EventCard({ event }: Props) {
     supabase.storage.from('EventAssets').getPublicUrl(`Banners/${event.EventID}`).data.publicUrl
   ]);
 
-
   // Display the fallback image if the event banner is not available
   const [useFallback, setUseFallback] = useState(false);
+  const dispatch = useTypedDispatch();
+
+  useEffect(() => {
+    dispatch(fetchEventUsers(event.EventID))
+  }, [dispatch]);
 
   const pressCallback = React.useCallback(() => {
     router.push(`/home/${event.EventID}`);
   }, [event]);
+
+  //calculate team position
+  const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
+  const myTeams = useSelector(selectMyTeams);
+  const myTeam = myTeams.find((team) => team.BelongsToEventID == event.EventID)
+  teamsList.sort((a, b) => b.RewardCount - a.RewardCount)
+  const myTeamPlace = teamsList.findIndex((team) => team.TeamID == myTeam?.TeamID)
+
+  //calculate individual position
+  const usersList = useSelector(selectIndividualLeaderboard)
+  const UserID = useSelector(selectUserID)
+  const myUser = usersList.find((user) => user.ProfileID == UserID)
+  usersList.sort((a, b) => b.RewardCount - a.RewardCount)
+  const myUserPlace = usersList.findIndex((user) => user.ProfileID == UserID)
+
+  //calculate daily progress
+  const progress = 5000 //temp value
+
+  const currentDate = new Date()
+  useEffect(() => {
+    dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
+  }, [dispatch]);
+
+  const activityProgressList = useSelector(selectTodaysProgress)
+  const activityProgress = activityProgressList.find((team) => team.BelongsToTeamID == myTeam?.TeamID)
+
+  // if (activityProgress != undefined){//record already exists, so we will update it, but only if the new progress is different
+  //   if (activityProgress.RawProgress == progress){
+  //     console.log("PROGRESS MATCHES, SO DON'T INSERT OR UPDATE!!")
+
+  //   } else {
+  //     useEffect(() => {
+  //       dispatch(updateTodaysProgress({activityProgressID: activityProgress.ActivityProgressID, progress: progress}))
+  //     }, [dispatch]);
+  //     console.log("UPDATING ACTIVITY PROGRESS")
+
+  //   }
+
+  // } else {//record does not exist for today, so we will insert one
+  //   useEffect(() => {
+  //     dispatch(insertTodaysProgress({userID: UserID, teamID: myTeam?.TeamID, type: event.Type, progress: progress}))
+  //   }, [dispatch]);
+  //   console.log("INSERTING ACTIVITY PROGRESS")
+
+  // }
+
+  
+
+
+  var typeUnit = "";
+  if (event?.Type == "Distance"){
+    typeUnit = "mi";
+  } else if (event?.Type == "Steps"){
+    typeUnit = "steps";
+  }
+
 
   return (
     <AnimatePresence exitBeforeEnter>
@@ -75,9 +142,10 @@ export default function EventCard({ event }: Props) {
           >
             <YStack>
                 <H3 color="black">{event.Name}</H3>
-                <H5 color="black">Daily Progress: 7500 Steps</H5>
-                <H5 color="black">Team Place: 2nd</H5>
-                <H5 color="black">Individual Place: 7th</H5>
+                <H5 color="black">My Team: {myTeam?.Name}</H5>
+                <H5 color="black">Daily Progress: {progress} {typeUnit}</H5>
+                <H5 color="black">Team Place: {myTeamPlace + 1}/{teamsList.length}     🍃 {myTeam?.RewardCount} {event.RewardPlural}</H5>
+                <H5 color="black">Individual Place: {myUserPlace + 1}/{usersList.length}     🍃 {myUser?.RewardCount} {event.RewardPlural}</H5>
                 {/* Fake Data, will be replaced later*/}
             </YStack>
             
