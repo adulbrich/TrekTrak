@@ -64,14 +64,15 @@
 
   <!-- Login modal -->
   <div class="shadow-lg rounded-md ring-1 ring-black/5 flex flex-col">
-    <!-- Logo -->
+    <!-- Logo
     <div class="py-4 text-center px-4 border-b border-black/5 flex items-end justify-between">
-      <img src={osuLogo} alt="University logo" class="w-1/2 select-none pointer-events-none" />
-    </div>
+      <img class="h-auto w-[50%] p-2" src="/FSF_Logo_Transparent.png" alt="OSU Logo">
+      TrekTrak
+    </div>-->
 
     <!-- Title -->
     <div class="p-8 pb-0 text-xl font-semibold">
-      DamFit Management Login
+      Login
     </div>
     
     <!-- Sign in form -->
@@ -136,7 +137,7 @@
           disabled={actionSubmitted}
           name="email"
           autocomplete="email"
-          class="ring-1 ring-black/10 rounded outline-none focus:ring-2 focus:ring-orange-400 transition-all ease-in-out px-3 h-10"
+          class="ring-1 ring-black/10 rounded outline-none focus:ring-2 focus:ring-blue-400 transition-all ease-in-out px-3 h-10"
           />
       </div>
 
@@ -150,7 +151,7 @@
           type="password"
           name="password"
           autocomplete="current-password"
-          class="ring-1 ring-black/10 rounded outline-none focus:ring-2 focus:ring-orange-400 transition-all ease-in-out px-3 h-10"
+          class="ring-1 ring-black/10 rounded outline-none focus:ring-2 focus:ring-blue-400 transition-all ease-in-out px-3 h-10"
           />
       </div>
 
@@ -161,7 +162,7 @@
 
       <!-- Sign in button -->
       <button
-        class="flex justify-center items-center text-white disabled:text-gray-300 ring-1 ring-orange-400/75 disabled:ring-0 bg-orange-400 hover:bg-orange-500 disabled:bg-gray-100 transition-all ease-in-out disabled:cursor-not-allowed h-10 w-32 mt-4 rounded"
+        class="flex justify-center items-center text-white disabled:text-gray-300 ring-1 ring-blue-400/75 disabled:ring-0 bg-blue-400 hover:bg-blue-500 disabled:bg-gray-100 transition-all ease-in-out disabled:cursor-not-allowed h-10 w-32 mt-4 rounded"
         disabled={signInDisabled}
         >
         <!-- Conditional that shows a spinner IF we are processing a sign in request -->
