@@ -59,7 +59,7 @@ const Profile = () => {
 
         <YStack paddingTop="$5" space>
           <Text fontSize="$8" fontWeight="bold" textAlign="center" color="#426B1F">
-            OSU FSF
+            TREK TRAK
           </Text>
           {!isEditing ? (
             <YStack alignItems="center" space="$4">
