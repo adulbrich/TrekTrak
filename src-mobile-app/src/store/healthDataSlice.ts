@@ -28,7 +28,7 @@ const initialState: healthDataState = {
     distanceTraveled: 0
 }
 
-const getStepsData = function (){
+const getStepsDataIOS = function (){
     return new Promise((resolve, reject) => {
         const stepOptions: HealthInputOptions = {}
 
@@ -39,7 +39,7 @@ const getStepsData = function (){
     })
 }
 
-const getDistanceData = function (){
+const getDistanceDataIOS = function (){
     return new Promise((resolve, reject) => {
         //error listed, but this does not impact app functionality
         const distanceOptions: HealthInputOptions = {unit: "mile"}
@@ -60,7 +60,7 @@ export const fetchStepsDataIOS = createAsyncThunk(
         let steps = 0
 
        try {
-            const s = await getStepsData()
+            const s = await getStepsDataIOS()
             steps = Number(s)
 
        } catch (error) {
@@ -80,7 +80,7 @@ export const fetchDistanceDataIOS = createAsyncThunk(
         let distance = 0
 
        try {
-            const d = await getDistanceData()
+            const d = await getDistanceDataIOS()
             distance = Number(d)
 
        } catch (error) {

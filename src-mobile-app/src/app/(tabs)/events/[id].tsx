@@ -33,6 +33,14 @@ export default function EventDetails() {
     typeUnit = "steps";
   }
 
+  const date = new Date()
+  const endDate = new Date(event?.EndsAt ?? "")
+  let eventEnded = false
+
+  if (endDate && date > endDate){//event has ended
+    eventEnded = true
+  }
+
   //const { user, session } = useAuth();
 
   const teamStats = useTypedSelector<SBTeamStats[]>(store => store.teamStatsSlice.teamStats)
@@ -150,7 +158,26 @@ export default function EventDetails() {
 
             {/* Rounded Register Button */}
             <YStack width={'100%'} alignItems="center" padding="$4">
-              <Button
+
+              {eventEnded ? 
+                <Button
+                bg={'#92bf6b'}
+                color={'white'}
+                fontSize="$6"
+                height="$5"
+                width="$14"
+                onPress={registerCallback}
+                borderRadius="$4"
+                shadowColor={'#000'} // Shadow color
+                shadowOffset={{ width: 0, height: 2 }} // Shadow offset
+                shadowOpacity={0.3} // Shadow opacity
+                shadowRadius={4} // Shadow radius
+                disabled={eventEnded}
+              >
+                {"Event Ended"}
+              </Button>
+                :
+                <Button
                 bg={registered ? '#92bf6b' : '#81c746'}
                 color={'white'}
                 fontSize="$6"
@@ -167,6 +194,7 @@ export default function EventDetails() {
               >
                 {registered ? "Registered" : "Register"}
               </Button>
+              }
             </YStack>
           </YStack>
 
