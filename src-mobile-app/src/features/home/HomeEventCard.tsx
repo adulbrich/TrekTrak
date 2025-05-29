@@ -44,7 +44,7 @@ export default function EventCard({ event }: Props) {
 
 
   //calculate daily progress
-  let progress = 10 //temp value
+  let progress = 0 //temp value
   var typeUnit = "";
   let displayProgress = 0
 

@@ -10,7 +10,7 @@ import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
 import { useTypedDispatch } from "../../../store/store";
 import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
 
-export default function TeamLeaderboardPage() {
+export default function IndividualLeaderboardPage() {
     const theme = useTheme();
     const dispatch = useTypedDispatch();
     const eventID = useLocalSearchParams().eventID

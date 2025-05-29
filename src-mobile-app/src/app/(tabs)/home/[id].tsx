@@ -19,12 +19,15 @@ import { useSelector } from "react-redux";
 import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
 import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
 import { selectMyTeams } from "../../../store/teamsSlice";
-import { selectTodaysProgress } from "../../../store/activityProgressSlice";
+import { fetchEventProgress, selectTodaysProgress } from "../../../store/activityProgressSlice";
+import DailyProgressCard from "../../../features/home/DailyProgressCard";
+import { selectUserID } from "../../../store/systemSlice";
 
 
 export default function HomeEventDetails() {
   const theme = useTheme();
   const dispatch = useTypedDispatch();
+  const UserID = useSelector(selectUserID)
 
   const slugEventID = useLocalSearchParams().id;
   const event = useTypedSelector<SBEvent[]>(store => store.eventsSlice.events)
@@ -32,59 +35,17 @@ export default function HomeEventDetails() {
 
   if (event == undefined) return null
 
-  //get progress, team, and user data
+  //get team and user data
   const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
   const myTeams = useSelector(selectMyTeams);
   const myTeam = myTeams.find((team) => team.BelongsToEventID == event.EventID)
   const usersList = useSelector(state => selectEventUsers(state, event?.EventID))
-  const activityProgressList = useSelector(selectTodaysProgress)
-  const activityProgress = activityProgressList.find((team) => team.BelongsToTeamID == myTeam?.TeamID)
 
-  let rewards = 0
-  let existsNextTier = false
-  let toNextTier = 0
-  let percentComplete = 0
-  let displayProgress = 0
+  if (myTeam == undefined) return null
 
-  if (activityProgress && event.Type == "Steps"){
-    for (let i = 0; i < event.AchievementCount; i++){
-      if (activityProgress.RawProgress >= Number(event.Achievements[i])){
-        rewards++
-      } else if (!existsNextTier){//checks if there is another tier and calculates amount needed to reach it
-        toNextTier = Number(event.Achievements[i]) - activityProgress.RawProgress
-        existsNextTier = true
-      }
-    }
-
-    //calculate progress bar progress
-    //calculate progress bar percents
-    percentComplete = (activityProgress.RawProgress / Number(event.Achievements[event.AchievementCount - 1])) * 100
-    if (percentComplete > 100) percentComplete = 100
-    displayProgress = activityProgress.RawProgress
-
-  } else if (activityProgress){//calculate distance
-    for (let i = 0; i < event.AchievementCount; i++){
-      if (activityProgress.RawProgress / 100 >= Number(event.Achievements[i])){
-        rewards++
-      } else if (!existsNextTier){//checks if there is another tier and calculates amount needed to reach it
-        toNextTier = Number(event.Achievements[i]) - (activityProgress.RawProgress / 100)
-        existsNextTier = true
-      }
-    }
-
-    percentComplete = ((activityProgress.RawProgress / 100) / Number(event.Achievements[event.AchievementCount - 1])) * 100
-    if (percentComplete > 100) percentComplete = 100
-    displayProgress = activityProgress.RawProgress / 100
-  }
-
-  
-
-  var typeUnit = "";
-  if (event?.Type == "Distance"){
-    typeUnit = "mi";
-  } else if (event?.Type == "Steps"){
-    typeUnit = "steps";
-  }
+  useEffect(() => {
+    dispatch(fetchEventProgress({teamID: myTeam.TeamID, userID: UserID ?? ""}))
+  }, [dispatch]);
 
 
   const [assets] = useAssets([
@@ -164,30 +125,7 @@ export default function HomeEventDetails() {
             </View>
           </Card>
 
-          <Card height={"auto"} width={"100%"} paddingHorizontal={"$2.5"}elevation={"$0.25"}>
-            <View padding={"$2"}>
-              <YStack>
-                <XStack>
-                  <H4 textAlign="left" width={"80%"}>{displayProgress} / {event.Achievements[event.AchievementCount - 1]} {typeUnit}</H4>
-                  <H4 textAlign="right" width={"20%"}>{rewards} 🍃 </H4>
-                </XStack>
-                <XStack paddingVertical={"$1"}>
-                  <View width={`${percentComplete}%`} height={"$0.5"} backgroundColor={"#81c746"} marginRight={"$-1"}></View>
-                  <View width={`${100 - percentComplete}%`} height={"$0.5"} marginLeft={"$-1"}></View>
-                </XStack>
-                {existsNextTier ? (<H5>{toNextTier} {typeUnit} until next tier</H5>) : false}
-                {
-                  event.Achievements.map((tier, index) => (
-                  <View key={tier}>
-                    <XStack>
-                      <Text paddingVertical={"$1.5"}>{event.Achievements[index]}   </Text>
-                      {index+1 <= rewards ? <Text>✅</Text> : <Text>❌</Text>}
-                    </XStack>
-                    </View>
-                  ))}
-              </YStack>
-            </View>
-          </Card>
+          <DailyProgressCard teamID={myTeam.TeamID} event={event} />
 
           <TeamLeaderboardCard teamList={teamsList}/>
 

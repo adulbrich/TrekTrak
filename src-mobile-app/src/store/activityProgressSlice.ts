@@ -10,12 +10,15 @@ import teamLeaderboardSlice from './teamLeaderboardSlice';
 
 export interface ActivityProgressState {
     progress: SBProgress[]
+    eventProgress: SBProgress[]
 }
   
   const initialState: ActivityProgressState = {
-    progress: []
+    progress: [],
+    eventProgress: []
 }
 
+//gets every activityProgress record for the user for the current day
 export const fetchTodaysProgress = createAsyncThunk(
     'activityProgress/fetchTodaysProgress',
     async (props: {date: Date, userID: string}, thunkAPI) => { 
@@ -31,6 +34,23 @@ export const fetchTodaysProgress = createAsyncThunk(
             .gte('CreatedAt', startOfDay)
             .lte('CreatedAt', endOfDay)
 
+        if (error) throw error
+
+        return data
+    }
+)
+
+//gets all of a user's activityProgress records for a single event
+export const fetchEventProgress = createAsyncThunk(
+    'activityProgress/fetchEventProgress',
+    async (props: {teamID: string, userID: string}, thunkAPI) => { 
+        
+        const { data, error } = await supabase
+            .from('ActivityProgress')
+            .select('*')
+            .eq('CreatedByProfileID', props.userID)
+            .eq('BelongsToTeamID', props.teamID)
+  
         if (error) throw error
 
         return data
@@ -101,6 +121,13 @@ const activityProgressSlice = createSlice({
         }),
         builder.addCase(fetchTodaysProgress.rejected, (state, action) => {
             console.error("ACTIVITY PROGRESS ERROR: ", action.error)
+        }),
+        builder.addCase(fetchEventProgress.fulfilled, (state, action) => {
+            state.eventProgress = action.payload
+
+        }),
+        builder.addCase(fetchEventProgress.rejected, (state, action) => {
+            console.error("EVENT ACTIVITY PROGRESS ERROR: ", action.error)
         })
     }
 
@@ -109,3 +136,4 @@ const activityProgressSlice = createSlice({
 
 export default activityProgressSlice.reducer
 export const selectTodaysProgress = (state: RootState) => state.activityProgressSlice.progress;
+export const selectEventProgress = (state: RootState) => state.activityProgressSlice.eventProgress;
