@@ -14,6 +14,7 @@ import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "
 import { selectUserID } from "../../store/systemSlice";
 import { fetchTodaysProgress, insertTodaysProgress, selectTodaysProgress, updateTodaysProgress } from "../../store/activityProgressSlice";
 import eventsSlice from "../../store/eventsSlice";
+import { selectDistanceData, selectStepsData } from "../../store/healthDataSlice";
 
 type Props = {
   event: Tables<'Events'>
@@ -42,7 +43,20 @@ export default function EventCard({ event }: Props) {
 
 
   //calculate daily progress
-  const progress = 7000 //temp value
+  let progress = 10 //temp value
+  var typeUnit = "";
+
+  if (event?.Type == "Distance"){
+    typeUnit = "mi";
+    progress = useSelector(selectDistanceData)
+
+  } else if (event?.Type == "Steps"){
+    typeUnit = "steps";
+    progress = useSelector(selectStepsData)
+    
+  }
+
+  //console.log("DAILY PROGRESS: ", progress, " ", typeUnit)
 
   const currentDate = new Date()
   useEffect(() => {
@@ -62,6 +76,7 @@ export default function EventCard({ event }: Props) {
           dispatch(updateTodaysProgress({activityProgressID: activityProgress.ActivityProgressID, progress: progress}))
           dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
         console.log("UPDATING ACTIVITY PROGRESS")
+        console.log("DISTANCE: ", progress, " --- ", activityProgress.RawProgress)
   
       }
   
@@ -89,9 +104,6 @@ export default function EventCard({ event }: Props) {
   }
 
   //calculate team position after updated
-  const newteamsList = useSelector(state => selectEventTeams(state, event?.EventID))
-  const newMyTeams = useSelector(selectMyTeams);
-  const newMyTeam = myTeams.find((team) => team.BelongsToEventID == event.EventID)
   teamsList.sort((a, b) => b.RewardCount - a.RewardCount)
   const myTeamPlace = teamsList.findIndex((team) => team.TeamID == myTeam?.TeamID)
 
@@ -102,17 +114,6 @@ export default function EventCard({ event }: Props) {
   usersList.sort((a, b) => b.RewardCount - a.RewardCount)
   const myUserPlace = usersList.findIndex((user) => user.ProfileID == UserID)
 
-  
-
-
-  var typeUnit = "";
-  if (event?.Type == "Distance"){
-    typeUnit = "mi";
-  } else if (event?.Type == "Steps"){
-    typeUnit = "steps";
-  }
-
-
   return (
     <AnimatePresence exitBeforeEnter>
       <YStack
@@ -121,7 +122,7 @@ export default function EventCard({ event }: Props) {
         enterStyle={{ y: 15, opacity: 0 }}
         animation="slow"
       >
-        <Card height={"$20"} elevation={"$0.25"} pressStyle={{ opacity: 0.8 }} animation="medium" onPress={pressCallback}>
+        <Card height={"$20"} elevation={"$0.25"} pressStyle={{ opacity: 0.8 }} marginBottom={"$4"} animation="medium" onPress={pressCallback}>
           { assets && (
             <YStack borderRadius={"$4"} overflow="hidden" fullscreen enterStyle={{ opacity: 0 }} animation={"slow"}>
               <Image

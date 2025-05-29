@@ -43,6 +43,7 @@ export default function HomeEventDetails() {
   let rewards = 0
   let existsNextTier = false
   let toNextTier = 0
+  let percentComplete = 0
   if (activityProgress){
     for (let i = 0; i < event.AchievementCount; i++){
       if (activityProgress.RawProgress >= Number(event.Achievements[i])){
@@ -52,7 +53,13 @@ export default function HomeEventDetails() {
         existsNextTier = true
       }
     }
+
+    //calculate progress bar progress
+    //calculate progress bar percents
+    percentComplete = (activityProgress.RawProgress / Number(event.Achievements[event.AchievementCount - 1])) * 100
+    if (percentComplete > 100) percentComplete = 100
   }
+
   
 
   var typeUnit = "";
@@ -108,15 +115,8 @@ export default function HomeEventDetails() {
           </YStack>
 
           {/* Event box for dates, description*/}
-          <YStack 
-            width={'100%'} 
-            padding="$4" 
-            paddingTop="$3"
-            borderWidth={1} 
-            borderRadius={"$4"}
-            borderColor="#898A8D"
-            >
-
+          <Card height={"auto"} width={"100%"} paddingHorizontal={"$2.5"}elevation={"$0.25"}>
+            <View padding={"$2"}>
             {/* Event Name */}
             <YStack>
               <Text color="black" fontSize="$9" fontWeight="bold" paddingVertical="$1">
@@ -132,25 +132,20 @@ export default function HomeEventDetails() {
               </Text>
 
               <YStack marginVertical="$2.5" alignItems="center">
-                <YStack width={'100%'} 
+                <View width={'100%'} 
                   padding="$3" 
                   //borderWidth={1} 
                   borderRadius="$4"
-                  borderRightWidth={1}
-                  borderLeftWidth={1}
-                  borderColor="#ccc" 
-                  backgroundColor="#f8f8f8"
+                  backgroundColor="#f0f0f0"
                   maxHeight="$20"
-                  shadowRadius=""
-                  shadowColor="black"
                 >
                   <Text color="black" fontSize="$5">{event.Description}</Text>
-                </YStack>
+                </View>
               </YStack>
 
             </YStack>
-
-          </YStack>
+            </View>
+          </Card>
 
           <Card height={"auto"} width={"100%"} paddingHorizontal={"$2.5"}elevation={"$0.25"}>
             <View padding={"$2"}>
@@ -158,6 +153,10 @@ export default function HomeEventDetails() {
                 <XStack>
                   <H4 textAlign="left" width={"80%"}>{activityProgress?.RawProgress} / {event.Achievements[event.AchievementCount - 1]} {typeUnit}</H4>
                   <H4 textAlign="right" width={"20%"}>{rewards} 🍃 </H4>
+                </XStack>
+                <XStack paddingVertical={"$1"}>
+                  <View width={`${percentComplete}%`} height={"$0.5"} backgroundColor={"#81c746"} marginRight={"$-1"}></View>
+                  <View width={`${100 - percentComplete}%`} height={"$0.5"} marginLeft={"$-1"}></View>
                 </XStack>
                 {existsNextTier ? (<H5>{toNextTier} {typeUnit} until next tier</H5>) : false}
                 {

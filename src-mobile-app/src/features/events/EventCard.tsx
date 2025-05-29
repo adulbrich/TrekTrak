@@ -45,7 +45,7 @@ export default function EventCard({ event }: Props) {
         enterStyle={{ y: 15, opacity: 0 }}
         animation="slow"
       >
-        <Card height={"$15"} elevation={"$0.25"} pressStyle={{ opacity: 0.8 }} animation="medium" onPress={pressCallback}>
+        <Card height={"$15"} elevation={"$0.25"} pressStyle={{ opacity: 0.8 }} marginBottom={"$4"} animation="medium" onPress={pressCallback}>
           { assets && (
             <YStack borderRadius={"$4"} overflow="hidden" fullscreen enterStyle={{ opacity: 0 }} animation={"slow"}>
               <Image

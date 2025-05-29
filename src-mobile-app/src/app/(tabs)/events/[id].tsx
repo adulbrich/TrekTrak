@@ -39,7 +39,6 @@ export default function EventDetails() {
     .filter(ts => ts.BelongsToEventID === slugEventID)
     .sort((a, b) => (b.TotalScore ?? 0) - (a.TotalScore ?? 0));
 
-  console.log(teamStats);
 
   const [assets] = useAssets([
 

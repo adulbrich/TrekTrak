@@ -15,6 +15,7 @@ import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist
 import { useDispatch, useSelector, useStore } from "react-redux";
 import teamLeaderboardSlice from "./teamLeaderboardSlice";
 import individualLeaderboardSlice from "./individualLeaderboardSlice";
+import healthDataSlice from "./healthDataSlice"
 
 const persistConfig = { key: 'redux-root', storage: AsyncStorage };
 
@@ -32,6 +33,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   eventStatsSlice: eventStatsSlice,
   profileStatsSlice: profileStatsSlice,
   activityProgressSlice: activityProgressSlice,
+  healthDataSlice: healthDataSlice,
 
   //Leaderboard
   teamLeaderboardSlice: teamLeaderboardSlice,
