@@ -44,7 +44,9 @@ export default function HomeEventDetails() {
   let existsNextTier = false
   let toNextTier = 0
   let percentComplete = 0
-  if (activityProgress){
+  let displayProgress = 0
+
+  if (activityProgress && event.Type == "Steps"){
     for (let i = 0; i < event.AchievementCount; i++){
       if (activityProgress.RawProgress >= Number(event.Achievements[i])){
         rewards++
@@ -58,6 +60,21 @@ export default function HomeEventDetails() {
     //calculate progress bar percents
     percentComplete = (activityProgress.RawProgress / Number(event.Achievements[event.AchievementCount - 1])) * 100
     if (percentComplete > 100) percentComplete = 100
+    displayProgress = activityProgress.RawProgress
+
+  } else if (activityProgress){//calculate distance
+    for (let i = 0; i < event.AchievementCount; i++){
+      if (activityProgress.RawProgress / 100 >= Number(event.Achievements[i])){
+        rewards++
+      } else if (!existsNextTier){//checks if there is another tier and calculates amount needed to reach it
+        toNextTier = Number(event.Achievements[i]) - (activityProgress.RawProgress / 100)
+        existsNextTier = true
+      }
+    }
+
+    percentComplete = ((activityProgress.RawProgress / 100) / Number(event.Achievements[event.AchievementCount - 1])) * 100
+    if (percentComplete > 100) percentComplete = 100
+    displayProgress = activityProgress.RawProgress / 100
   }
 
   
@@ -151,7 +168,7 @@ export default function HomeEventDetails() {
             <View padding={"$2"}>
               <YStack>
                 <XStack>
-                  <H4 textAlign="left" width={"80%"}>{activityProgress?.RawProgress} / {event.Achievements[event.AchievementCount - 1]} {typeUnit}</H4>
+                  <H4 textAlign="left" width={"80%"}>{displayProgress} / {event.Achievements[event.AchievementCount - 1]} {typeUnit}</H4>
                   <H4 textAlign="right" width={"20%"}>{rewards} 🍃 </H4>
                 </XStack>
                 <XStack paddingVertical={"$1"}>

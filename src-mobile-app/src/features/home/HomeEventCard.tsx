@@ -15,6 +15,7 @@ import { selectUserID } from "../../store/systemSlice";
 import { fetchTodaysProgress, insertTodaysProgress, selectTodaysProgress, updateTodaysProgress } from "../../store/activityProgressSlice";
 import eventsSlice from "../../store/eventsSlice";
 import { selectDistanceData, selectStepsData } from "../../store/healthDataSlice";
+import { parse } from "path";
 
 type Props = {
   event: Tables<'Events'>
@@ -45,14 +46,20 @@ export default function EventCard({ event }: Props) {
   //calculate daily progress
   let progress = 10 //temp value
   var typeUnit = "";
+  let displayProgress = 0
 
   if (event?.Type == "Distance"){
     typeUnit = "mi";
     progress = useSelector(selectDistanceData)
+    progress = Math.round(progress * 100) / 100
+    progress = Math.round(progress * 100)
+    displayProgress = progress / 100
+    
 
   } else if (event?.Type == "Steps"){
     typeUnit = "steps";
     progress = useSelector(selectStepsData)
+    displayProgress = progress
     
   }
 
@@ -76,7 +83,6 @@ export default function EventCard({ event }: Props) {
           dispatch(updateTodaysProgress({activityProgressID: activityProgress.ActivityProgressID, progress: progress}))
           dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
         console.log("UPDATING ACTIVITY PROGRESS")
-        console.log("DISTANCE: ", progress, " --- ", activityProgress.RawProgress)
   
       }
   
@@ -97,7 +103,9 @@ export default function EventCard({ event }: Props) {
   let rewards = 0
   if (newAP){
     for (let i = 0; i < event.AchievementCount; i++){
-      if (newAP.RawProgress >= Number(event.Achievements[i])){
+      if (newAP.RawProgress >= Number(event.Achievements[i]) && event.Type == "Steps"){
+        rewards++
+      } else if ((newAP.RawProgress / 100) >= Number(event.Achievements[i])) {//if distance, we need to divide by 100
         rewards++
       }
     }
@@ -163,7 +171,7 @@ export default function EventCard({ event }: Props) {
             <YStack>
                 <H3 color="black">{event.Name}</H3>
                 <H5 color="black">My Team: {myTeam?.Name}</H5>
-                <H5 color="black">Daily Progress: {newAP?.RawProgress} {typeUnit}    🍃 {rewards}</H5>
+                <H5 color="black">Daily Progress: {displayProgress} {typeUnit}    🍃 {rewards}</H5>
                 <H5 color="black">Team Place: {myTeamPlace + 1}/{teamsList.length}     🍃 {myTeam?.RewardCount} {event.RewardPlural}</H5>
                 <H5 color="black">Individual Place: {myUserPlace + 1}/{usersList.length}     🍃 {myUser?.RewardCount} {event.RewardPlural}</H5>
                 {/* Fake Data, will be replaced later*/}

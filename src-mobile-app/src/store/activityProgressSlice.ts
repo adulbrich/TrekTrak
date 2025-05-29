@@ -73,6 +73,7 @@ export const insertTodaysProgress = createAsyncThunk(
 export const updateTodaysProgress = createAsyncThunk(
     'activityProgress/updateTodaysProgress',
     async (props: {activityProgressID: string, progress: number}, thunkAPI) => { 
+        console.log("UPDATED PROGRESS VALUE: ", props.progress)
         
         const { data, error } = await supabase
             .from('ActivityProgress')
