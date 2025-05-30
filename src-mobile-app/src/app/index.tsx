@@ -15,7 +15,7 @@ import { fetchMyTeams } from "../store/teamsSlice";
 import { fetchTeamLeaderboard } from "../store/teamLeaderboardSlice";
 import { fetchEventUsers } from "../store/individualLeaderboardSlice";
 import { fetchTodaysProgress } from "../store/activityProgressSlice";
-import { fetchDistanceDataIOS, fetchStepsDataIOS } from "../store/healthDataSlice";
+import { fetchDistanceDataIOS, fetchStepsDataIOS, initHealthDataIOS } from "../store/healthDataSlice";
 import { Platform } from "expo-modules-core";
 
 export default function Index() {
@@ -42,9 +42,12 @@ export default function Index() {
     dispatch(fetchTeamStats());
     dispatch(syncMyActivity());
     if (Platform.OS === 'ios'){
+      console.log("USING IOS")
+      initHealthDataIOS()
       dispatch(fetchStepsDataIOS())
       dispatch(fetchDistanceDataIOS())
-    } else {
+    } else {//use android instead
+      console.log("USING ANDROID")
 
     }
   }, [dispatch]);

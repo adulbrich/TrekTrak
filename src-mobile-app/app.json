@@ -40,7 +40,18 @@
       "expo-router",
       "expo-font",
       "expo-secure-store",
-      "react-native-health"
+      "react-native-health",
+      "expo-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "minSdkVersion": 26
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
