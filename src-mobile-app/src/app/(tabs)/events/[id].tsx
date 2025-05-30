@@ -192,31 +192,6 @@ export default function EventDetails() {
             </YStack>
           </YStack>
 
-
-          <YStack gap={'$4'} 
-            borderWidth={1} 
-            padding="$4"
-            borderRadius="$4"
-            borderColor="#898A8D"
-            >
-            <H3 color="black">Top 5 Teams</H3>
-            {/*{ teamStats.length === 0 && (
-              <XStack width={'100%'} justifyContent="center">
-                <Text>No stats available</Text>
-              </XStack>
-            )}
-            { teamStats.slice(0, 5).map(ts =>
-              <XStack key={ts.TeamID} width={'100%'} justifyContent="space-between" alignItems="flex-end">
-                <Text color="black">{ ts.Name }</Text>
-                <RN_Text ellipsizeMode="clip" numberOfLines={1} style={[{ flex: 1, marginHorizontal: 1 }]}>
-                  ............................................................
-                </RN_Text>
-                <Text color="black">{ ts.TotalScore ?? 0 }</Text>
-              </XStack>
-            )} */}
-          </YStack>
-          
-
         </YStack>
       </ScrollView>
       
