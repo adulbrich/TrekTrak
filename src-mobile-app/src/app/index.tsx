@@ -15,7 +15,7 @@ import { fetchMyTeams } from "../store/teamsSlice";
 import { fetchTeamLeaderboard } from "../store/teamLeaderboardSlice";
 import { fetchEventUsers } from "../store/individualLeaderboardSlice";
 import { fetchTodaysProgress } from "../store/activityProgressSlice";
-import { fetchDistanceDataIOS, fetchStepsDataIOS, initHealthDataIOS } from "../store/healthDataSlice";
+import { fetchDistanceDataIOS, fetchHealthDataAndroid, fetchStepsDataIOS, initHealthDataIOS } from "../store/healthDataSlice";
 import { Platform } from "expo-modules-core";
 
 export default function Index() {
@@ -29,18 +29,6 @@ export default function Index() {
   const navigationState = useRootNavigationState();
 
   useEffect(() => {
-    //dispatch(fetchProfiles());
-    dispatch(fetchProfile(UserID))
-    dispatch(fetchProfileStats());
-    dispatch(fetchTeamStatsBreakdown());
-    dispatch(fetchEvents());
-    dispatch(fetchCurrentEvents(UserID));
-    dispatch(fetchTeamLeaderboard(currentEvents));
-    dispatch(fetchEventUsers(currentEvents));
-    dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
-    dispatch(fetchMyTeams());
-    dispatch(fetchTeamStats());
-    dispatch(syncMyActivity());
     if (Platform.OS === 'ios'){
       console.log("USING IOS")
       initHealthDataIOS()
@@ -48,7 +36,7 @@ export default function Index() {
       dispatch(fetchDistanceDataIOS())
     } else {//use android instead
       console.log("USING ANDROID")
-
+      dispatch(fetchHealthDataAndroid())
     }
   }, [dispatch]);
 

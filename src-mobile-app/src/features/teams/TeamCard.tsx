@@ -3,15 +3,15 @@ import { Tables } from "../../lib/supabase-types";
 import { useAssets } from "expo-asset";
 import { LinearGradient } from 'tamagui/linear-gradient';
 import { useDispatch } from "react-redux";
-import { setActiveEvent } from "../../store/eventsSlice";
-import React from "react";
+import { fetchCurrentEvents, setActiveEvent } from "../../store/eventsSlice";
+import React, { useEffect } from "react";
 import { router } from "expo-router";
 import { AlignCenter } from "@tamagui/lucide-icons";
 import { supabase } from "../../lib/supabase"; // Import your Supabase client
 import { selectMyProfile} from "../../store/profilesSlice";
 import { selectProfile } from "../../store/profileSlice";
 import { selectUserID } from "../../store/systemSlice";
-import { RootState } from '../../store/store';
+import { RootState, useTypedDispatch } from '../../store/store';
 import { useSelector } from 'react-redux';
 
 
@@ -23,6 +23,7 @@ type Props = {
 export default function TeamCard({ team }: Props) {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const dispatch2 = useTypedDispatch();//don't know the difference but it works 👍
 
 	// fetch team name
   function TeamName({ team }: Props) {
@@ -50,7 +51,7 @@ export default function TeamCard({ team }: Props) {
 			const { error, status } = await supabase
 				.from('TeamsProfiles') // The join table name
 				.insert([
-					{ TeamID: team.TeamID, ProfileID: UserID }
+					{ TeamID: team.TeamID, ProfileID: UserID, RewardCount: 0 }
 				]);
 
 				if(error && status == 409){
@@ -58,6 +59,8 @@ export default function TeamCard({ team }: Props) {
 					alert("You've already joined this team!");
 					return;
 				}
+
+				dispatch2(fetchCurrentEvents(UserID));
 				console.log('User joined the team successfully:');
 				return;
 			} catch (error) {

@@ -40,13 +40,7 @@ export default function EventDetails() {
   if (endDate && date > endDate){//event has ended
     eventEnded = true
   }
-
-  //const { user, session } = useAuth();
-
-  const teamStats = useTypedSelector<SBTeamStats[]>(store => store.teamStatsSlice.teamStats)
-    .filter(ts => ts.BelongsToEventID === slugEventID)
-    .sort((a, b) => (b.TotalScore ?? 0) - (a.TotalScore ?? 0));
-
+  
 
   const [assets] = useAssets([
 
@@ -206,7 +200,7 @@ export default function EventDetails() {
             borderColor="#898A8D"
             >
             <H3 color="black">Top 5 Teams</H3>
-            { teamStats.length === 0 && (
+            {/*{ teamStats.length === 0 && (
               <XStack width={'100%'} justifyContent="center">
                 <Text>No stats available</Text>
               </XStack>
@@ -219,7 +213,7 @@ export default function EventDetails() {
                 </RN_Text>
                 <Text color="black">{ ts.TotalScore ?? 0 }</Text>
               </XStack>
-            )}
+            )} */}
           </YStack>
           
 

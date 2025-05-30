@@ -79,6 +79,7 @@ export const insertTodaysProgress = createAsyncThunk(
             })
             .select()
             .single()
+            //if for some reason a duplicate is created, only 1 will be returned
 
         console.log("TODAYS DATA ERROR: ", error)
         console.log("TODAYS DATA: ", data)

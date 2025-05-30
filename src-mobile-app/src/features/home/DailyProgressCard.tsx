@@ -2,8 +2,10 @@ import { AnimatePresence, Card, H3, H4, H5, Image, Text, View, XStack, YStack } 
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { useSelector } from "react-redux";
-import { selectTodaysProgress } from "../../store/activityProgressSlice";
+import { fetchEventProgress, fetchTodaysProgress, selectTodaysProgress } from "../../store/activityProgressSlice";
 import { SBEvent } from "../../lib/models";
+import { useTypedDispatch } from "../../store/store";
+import { selectUserID } from "../../store/systemSlice";
 
 type Props = {
     teamID: string,
@@ -11,6 +13,14 @@ type Props = {
 }
 
 export default function DailyProgressCard({ teamID, event }: Props) {
+    const dispatch = useTypedDispatch();
+    const currentDate = new Date()
+    const UserID = useSelector(selectUserID)
+
+    useEffect(() => {
+      dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
+    }, [dispatch]);
+
     const activityProgressList = useSelector(selectTodaysProgress)
     const activityProgress = activityProgressList.find((team) => team.BelongsToTeamID == teamID)
 
