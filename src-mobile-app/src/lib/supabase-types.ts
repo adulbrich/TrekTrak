@@ -41,7 +41,7 @@ export type Database = {
           BelongsToTeamID: string
           CreatedAt: string
           CreatedByProfileID: string
-          RawProgress: number | null
+          RawProgress: number
           UpdatedAt: string
         }
         Insert: {
@@ -50,7 +50,7 @@ export type Database = {
           BelongsToTeamID: string
           CreatedAt?: string
           CreatedByProfileID: string
-          RawProgress?: number | null
+          RawProgress: number
           UpdatedAt?: string
         }
         Update: {
@@ -59,7 +59,7 @@ export type Database = {
           BelongsToTeamID?: string
           CreatedAt?: string
           CreatedByProfileID?: string
-          RawProgress?: number | null
+          RawProgress: number
           UpdatedAt?: string
         }
         Relationships: [
@@ -280,14 +280,17 @@ export type Database = {
         Row: {
           ProfileID: string
           TeamID: string
+          RewardCount: number
         }
         Insert: {
           ProfileID: string
           TeamID: string
+          RewardCount: number
         }
         Update: {
           ProfileID?: string
           TeamID?: string
+          RewardCount: number
         }
         Relationships: [
           {

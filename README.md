@@ -72,10 +72,16 @@ The TrekTrak project was created to better fit the needs of fitness event organi
     iOS (Mac only)
         a. Open Xcode simulator
 
+6. Replace index.js in node_modules/react-native-health  
+    Copy and paste the text within the comment in the file ```src/lib/react-native-health-fix.ts```  
 
-6. Start the Expo development server:
+7. Start the Expo development server:
     ```bash
-    npm run start
+    npx expo run:android
+    ``` 
+    or 
+    ```bash
+    npx expo run:ios
     ```
 
 #### Starlight Documentation

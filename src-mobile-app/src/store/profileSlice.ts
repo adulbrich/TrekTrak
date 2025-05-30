@@ -31,7 +31,6 @@ export const fetchProfile = createAsyncThunk(
                 .limit(1)
                 .single()
 
-            console.log("PROFILE: ", data ?? "not found")
             if (error) throw error;
             return data
     
@@ -51,7 +50,6 @@ const profileSlice = createSlice({
             state.Name = action.payload?.Name ?? null,
             state.ProfileID = action.payload.ProfileID
             state.UpdatedAt = action.payload.UpdatedAt
-            console.log("STATE: ", state)
 
         }),
         builder.addCase(fetchProfile.rejected, (state, action) => {

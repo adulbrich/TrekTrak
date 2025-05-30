@@ -33,13 +33,14 @@ export default function EventDetails() {
     typeUnit = "steps";
   }
 
-  //const { user, session } = useAuth();
+  const date = new Date()
+  const endDate = new Date(event?.EndsAt ?? "")
+  let eventEnded = false
 
-  const teamStats = useTypedSelector<SBTeamStats[]>(store => store.teamStatsSlice.teamStats)
-    .filter(ts => ts.BelongsToEventID === slugEventID)
-    .sort((a, b) => (b.TotalScore ?? 0) - (a.TotalScore ?? 0));
-
-  console.log(teamStats);
+  if (endDate && date > endDate){//event has ended
+    eventEnded = true
+  }
+  
 
   const [assets] = useAssets([
 
@@ -151,7 +152,26 @@ export default function EventDetails() {
 
             {/* Rounded Register Button */}
             <YStack width={'100%'} alignItems="center" padding="$4">
-              <Button
+
+              {eventEnded ? 
+                <Button
+                bg={'#92bf6b'}
+                color={'white'}
+                fontSize="$6"
+                height="$5"
+                width="$14"
+                onPress={registerCallback}
+                borderRadius="$4"
+                shadowColor={'#000'} // Shadow color
+                shadowOffset={{ width: 0, height: 2 }} // Shadow offset
+                shadowOpacity={0.3} // Shadow opacity
+                shadowRadius={4} // Shadow radius
+                disabled={eventEnded}
+              >
+                {"Event Ended"}
+              </Button>
+                :
+                <Button
                 bg={registered ? '#92bf6b' : '#81c746'}
                 color={'white'}
                 fontSize="$6"
@@ -168,33 +188,9 @@ export default function EventDetails() {
               >
                 {registered ? "Registered" : "Register"}
               </Button>
+              }
             </YStack>
           </YStack>
-
-
-          <YStack gap={'$4'} 
-            borderWidth={1} 
-            padding="$4"
-            borderRadius="$4"
-            borderColor="#898A8D"
-            >
-            <H3 color="black">Top 5 Teams</H3>
-            { teamStats.length === 0 && (
-              <XStack width={'100%'} justifyContent="center">
-                <Text>No stats available</Text>
-              </XStack>
-            )}
-            { teamStats.slice(0, 5).map(ts =>
-              <XStack key={ts.TeamID} width={'100%'} justifyContent="space-between" alignItems="flex-end">
-                <Text color="black">{ ts.Name }</Text>
-                <RN_Text ellipsizeMode="clip" numberOfLines={1} style={[{ flex: 1, marginHorizontal: 1 }]}>
-                  ............................................................
-                </RN_Text>
-                <Text color="black">{ ts.TotalScore ?? 0 }</Text>
-              </XStack>
-            )}
-          </YStack>
-          
 
         </YStack>
       </ScrollView>

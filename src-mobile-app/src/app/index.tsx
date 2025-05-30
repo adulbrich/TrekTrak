@@ -13,27 +13,31 @@ import { selectUserID } from "../store/systemSlice";
 import { useSelector } from 'react-redux';
 import { fetchMyTeams } from "../store/teamsSlice";
 import { fetchTeamLeaderboard } from "../store/teamLeaderboardSlice";
+import { fetchEventUsers } from "../store/individualLeaderboardSlice";
+import { fetchTodaysProgress } from "../store/activityProgressSlice";
+import { fetchDistanceDataIOS, fetchHealthDataAndroid, fetchStepsDataIOS, initHealthDataIOS } from "../store/healthDataSlice";
+import { Platform } from "expo-modules-core";
 
 export default function Index() {
   const { session, isReady, getSession } = useAuth();
   const dispatch = useTypedDispatch();
   const UserID = useSelector(selectUserID)
   const currentEvents = useSelector(selectMyEvents)
+  const currentDate = new Date()
 
   // We use this to key 
   const navigationState = useRootNavigationState();
 
   useEffect(() => {
-    //dispatch(fetchProfiles());
-    dispatch(fetchProfile(UserID))
-    dispatch(fetchProfileStats());
-    dispatch(fetchTeamStatsBreakdown());
-    dispatch(fetchEvents());
-    dispatch(fetchCurrentEvents(UserID));
-    dispatch(fetchTeamLeaderboard(currentEvents));
-    dispatch(fetchMyTeams());
-    dispatch(fetchTeamStats());
-    dispatch(syncMyActivity());
+    if (Platform.OS === 'ios'){
+      console.log("USING IOS")
+      initHealthDataIOS()
+      dispatch(fetchStepsDataIOS())
+      dispatch(fetchDistanceDataIOS())
+    } else {//use android instead
+      console.log("USING ANDROID")
+      dispatch(fetchHealthDataAndroid())
+    }
   }, [dispatch]);
 
   if (!isReady) {
@@ -49,5 +53,5 @@ export default function Index() {
   if (!session)
     return <Redirect href={'/(auth)/sign-in'} />;
   else
-    return <Redirect href={'/(tabs)/events/events-list'} />;
+    return <Redirect href={'/(tabs)/home/home-page'} />;
 }

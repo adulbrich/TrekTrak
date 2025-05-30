@@ -5,47 +5,43 @@ import { useTypedDispatch, useTypedSelector } from "../../../store/store";
 import { SBEvent, SBTeamStats } from "../../../lib/supabase-types";
 import { useAssets } from "expo-asset";
 import { getDateString } from "../../../lib/helpers";
-//import { useAuth } from "../../../lib/supabase";
 import React, { useEffect, useState } from "react";
-import { setActiveEvent } from "../../../store/eventsSlice";
-import { blue } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
-import { widths } from "@tamagui/config";
-import { FlatList } from "react-native";
 import TeamLeaderboardCard from "../../../features/home/TeamLeaderboardCard";
 import IndividualLeaderboardCard from "../../../features/home/IndividualLeaderboardCard";
-import { useAuth } from "../../../features/system/Auth";
-import { supabase } from "../../../lib/supabase";
 import { useSelector } from "react-redux";
 import { selectEventTeams } from "../../../store/teamLeaderboardSlice";
 import { fetchEventUsers, selectEventUsers, selectIndividualLeaderboard } from "../../../store/individualLeaderboardSlice";
 import { selectMyTeams } from "../../../store/teamsSlice";
 import { fetchEventProgress, selectTodaysProgress } from "../../../store/activityProgressSlice";
-import DailyProgressCard from "../../../features/home/DailyProgressCard";
 import { selectUserID } from "../../../store/systemSlice";
+import OverallProgressCard from "../../../features/home/OverallProgressCard";
+import DailyProgressCard from "../../../features/home/DailyProgressCard";
 
 
-export default function HomeEventDetails() {
+export default function PastEventPage() {
   const theme = useTheme();
   const dispatch = useTypedDispatch();
   const UserID = useSelector(selectUserID)
 
-  const slugEventID = useLocalSearchParams().id;
+  const eventID = useLocalSearchParams().eventID
   const event = useTypedSelector<SBEvent[]>(store => store.eventsSlice.events)
-    .find(ev => ev.EventID === slugEventID);
+    .find(ev => ev.EventID === eventID)
+
 
   if (event == undefined) return null
 
+  console.log("EVENT: ", event)
+
   //get team and user data
-  const teamsList = useSelector(state => selectEventTeams(state, event?.EventID))
+  const teamsList = useSelector(state => selectEventTeams(state, eventID))
   const myTeams = useSelector(selectMyTeams);
-  const myTeam = myTeams.find((team) => team.BelongsToEventID == event.EventID)
-  const usersList = useSelector(state => selectEventUsers(state, event?.EventID))
+  const myTeam = myTeams.find((team) => team.BelongsToEventID == eventID)
+  const usersList = useSelector(state => selectEventUsers(state, eventID))
+
+  teamsList.sort((a, b) => b.RewardCount - a.RewardCount)
+  usersList.sort((a, b) => b.RewardCount - a.RewardCount)
 
   if (myTeam == undefined) return null
-
-  useEffect(() => {
-    dispatch(fetchEventProgress({teamID: myTeam.TeamID, userID: UserID ?? ""}))
-  }, [dispatch]);
 
 
   const [assets] = useAssets([
@@ -66,7 +62,7 @@ export default function HomeEventDetails() {
           headerTintColor: "#000000",
           title: event.Name,
           headerShown: true,
-          headerBackTitle: 'Home',
+          headerBackTitle: 'Back',
           headerStyle: {
             backgroundColor: theme.background.get()
           },
@@ -121,11 +117,16 @@ export default function HomeEventDetails() {
                 </View>
               </YStack>
 
+              <YStack paddingVertical={"$2"}>
+                <XStack><H5 width={"70%"}> 🏆 Team: {teamsList[0].Name} </H5><H5 width={"20%"} textAlign={"right"}>{ teamsList[0].RewardCount} 🍃 </H5></XStack>
+                <XStack><H5 width={"70%"}> 🏆 Individual: {usersList[0].Profiles.Name} </H5><H5 width={"20%"} textAlign={"right"}>{ usersList[0].RewardCount} 🍃 </H5></XStack>
+              </YStack>
+
             </YStack>
             </View>
           </Card>
-
-          <DailyProgressCard teamID={myTeam.TeamID} event={event} />
+          
+          <OverallProgressCard teamID={myTeam.TeamID} event={event} />
 
           <TeamLeaderboardCard teamList={teamsList}/>
 

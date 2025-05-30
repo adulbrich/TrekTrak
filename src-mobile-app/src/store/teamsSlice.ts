@@ -87,7 +87,8 @@ export const joinTeam = createAsyncThunk<
     .from('TeamsProfiles')
     .insert({
       TeamID: teamID,
-      ProfileID: profileID
+      ProfileID: profileID,
+      RewardCount: 0
     })
     .select()
     .single();
