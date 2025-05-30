@@ -5,7 +5,7 @@ import { SafeAreaView, StyleSheet} from "react-native";
 import { useTypedDispatch, useTypedSelector } from "../../../store/store";
 import { fetchCurrentEvents, fetchEvents, fetchMyEvents, selectEvents } from "../../../store/eventsSlice";
 import React, { useEffect } from "react";
-import { useLocalSearchParams, Stack, router } from "expo-router";
+import { useLocalSearchParams, Stack } from "expo-router";
 import { useAssets } from "expo-asset";
 import { SBEvent, SBTeamStats } from "../../../lib/supabase-types";
 import { selectMyProfile } from "../../../store/profilesSlice";
@@ -19,42 +19,31 @@ import { fetchTeamLeaderboard } from "../../../store/teamLeaderboardSlice";
 import { fetchEventUsers } from "../../../store/individualLeaderboardSlice";
 import { fetchTodaysProgress } from "../../../store/activityProgressSlice";
 import { fetchMyTeams } from "../../../store/teamsSlice";
+import PastEventCard from "../../../features/home/PastEventCard";
 
 
 
-export default function Home() {
-  const dispatch = useTypedDispatch();
-  const UserID = useSelector(selectUserID)
+export default function PastEventsPage() {
+  const theme = useTheme();
   const currentEvents = useSelector(selectMyEvents)
   const currentDate = new Date()
-
-  useEffect(() => {
-    dispatch(fetchProfile(UserID))
-    dispatch(fetchEvents());
-    dispatch(fetchCurrentEvents(UserID));
-    dispatch(fetchTeamLeaderboard(currentEvents));
-    dispatch(fetchEventUsers(currentEvents));
-    dispatch(fetchTodaysProgress({date: currentDate, userID: UserID ?? ""}))
-    dispatch(fetchMyTeams());
-  }, [dispatch])
   
-  const pressCallback = React.useCallback(() => {
-    router.push({
-      pathname: `/home/past-events`
-    })
-  }, []);
 
   return (
     <SafeAreaView>
       <ScrollView height={'100%'} padding="$3">
        <YStack flex={1} paddingHorizontal={"$2"} paddingBottom={"$8"} space>
-       <Stack.Screen options={{ title: 'Home', headerShown: false }} />
-        <XStack alignItems="center">
-          <H2 width={"60%"}>Home</H2>
-          <H5 width={"40%"} textAlign={"right"} paddingRight={"$1"} onPress={pressCallback}>Past Events</H5>
-        </XStack>
-        
-        {currentEvents.map(ev => (currentDate > (new Date(ev.EndsAt))) ? <View key={ev.EventID}/> : <HomeEventCard key={ev.EventID} event={ev} /> )}
+       <Stack.Screen options={{
+          headerTintColor: "#000000",
+          title: "",
+          headerShown: true,
+          headerBackTitle: 'Home',
+          headerStyle: {
+            backgroundColor: theme.background.get()
+          },
+        }} />
+        <H2>Past Events</H2>
+        {currentEvents.map(ev => (currentDate > (new Date(ev.EndsAt))) ? <View key={ev.EventID}/> : <PastEventCard key={ev.EventID} event={ev} /> )}
        </YStack>
       </ScrollView>
     </SafeAreaView>
