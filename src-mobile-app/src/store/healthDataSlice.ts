@@ -5,10 +5,15 @@ import AppleHealthKit, {
     HealthKitPermissions,
     HealthInputOptions, HealthUnit
 } from 'react-native-health'
+import {
+    initialize,
+    requestPermission,
+    readRecords
+} from 'react-native-health-connect'
 import { Platform } from 'expo-modules-core';
 
 
-const permissions: HealthKitPermissions = {
+const iOSPermissions: HealthKitPermissions = {
     permissions: {
         read: [
             AppleHealthKit.Constants.Permissions.Steps,
@@ -18,6 +23,7 @@ const permissions: HealthKitPermissions = {
     }
 }
 
+
 export interface healthDataState {
     numSteps: number,
     distanceTraveled: number
@@ -26,6 +32,14 @@ export interface healthDataState {
 const initialState: healthDataState = {
     numSteps: 0,
     distanceTraveled: 0
+}
+
+export const initHealthDataIOS = function(){
+    AppleHealthKit.initHealthKit(iOSPermissions, (err) => {
+        if (err){
+            console.error("ERROR GETTING APPLE HEALTHKIT PERMISSIONS")
+        }
+    })
 }
 
 const getStepsDataIOS = function (){
@@ -43,6 +57,7 @@ const getDistanceDataIOS = function (){
     return new Promise((resolve, reject) => {
         //error listed, but this does not impact app functionality
         const distanceOptions: HealthInputOptions = {unit: "mile"}
+        
 
         AppleHealthKit.getDistanceWalkingRunning(distanceOptions, (err, results) => {
             if (err){ return reject("ERROR GETTING APPLE WALKING/RUNNING DISTANCE")}
