@@ -43,7 +43,7 @@ export default function PastEventsPage() {
           },
         }} />
         <H2>Past Events</H2>
-        {currentEvents.map(ev => (currentDate > (new Date(ev.EndsAt))) ? <View key={ev.EventID}/> : <PastEventCard key={ev.EventID} event={ev} /> )}
+        {currentEvents.map(ev => (currentDate < (new Date(ev.EndsAt))) ? <View key={ev.EventID}/> : <PastEventCard key={ev.EventID} event={ev} /> )}
        </YStack>
       </ScrollView>
     </SafeAreaView>
